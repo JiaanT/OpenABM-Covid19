@@ -185,7 +185,7 @@ void add_healthcare_worker_to_hospital( hospital *hospital, individual* indiv, i
 ******************************************************************************************/
 int healthcare_worker_working( individual *indiv )
 {
-	if( indiv->status == DEATH || is_in_hospital( indiv ) || indiv->quarantined == TRUE )
+	if( indiv->status == DEATH || is_in_hospital( indiv ) || indiv->quarantined == UNDER_SELF_QUARANTINE || indiv->quarantined == UNDER_CENTRALIZED_QUARANTINE )
 		return FALSE;
 
 	return TRUE;

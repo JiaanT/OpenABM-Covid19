@@ -29,7 +29,7 @@ void initialize_individual(
 
 	indiv->idx         = idx;
 	indiv->status      = SUSCEPTIBLE;
-	indiv->quarantined = FALSE;
+	indiv->quarantined = NOT_QUARANTINED;
 	indiv->app_user	   = FALSE;
 
 	for( day = 0; day < params->days_of_interactions; day++ )
@@ -74,14 +74,18 @@ void initialize_individual(
 	float sigma_x = params->sd_infectiousness_multiplier;
 	if ( sigma_x > 0 )
 	{
-		float b = sigma_x * sigma_x;
-		float a = 1 /b;
-		indiv->infectiousness_multiplier = gsl_ran_gamma( rng, a, b );
+		float zeta = log( 1 / sqrt( 1 + pow( sigma_x, 2 ) ) );
+		float sigma = sqrt( log( 1 + pow( sigma_x, 2) ) );
+		indiv->infectiousness_multiplier = gsl_ran_lognormal( rng, zeta, sigma );
 	}
 	else
 	{
 		indiv->infectiousness_multiplier = 1;
 	}
+
+	// HEALTHCODE
+	indiv->health_code_user = FALSE;
+	indiv->health_code_state = NULL;
 }
 
 /*****************************************************************************************
@@ -99,6 +103,12 @@ void initialize_hazard(
 	indiv->hazard = gsl_ran_exponential( rng, 1.0 ) / params->adjusted_susceptibility[indiv->age_group];
 }
 
+
+
+
+// TODO: Add logic of changing quarantine status according to the <health_code_user> state
+
+
 /*****************************************************************************************
 *  Name:		set_quarantine_status
 *  Description: sets the quarantine status of an individual and changes the
@@ -113,51 +123,139 @@ void set_quarantine_status(
 	model *model
 )
 {
-	if( status )
+	// PROGRESS
+	switch( status )
 	{
-		indiv->quarantined             = TRUE;
-		indiv->infection_events->times[QUARANTINED] = time;
+		case UNDER_SELF_QUARANTINE:
+			indiv->quarantined             						= status;
+			indiv->infection_events->times[SELF_QUARANTINED]	= time; //TODO
 
-		// Increment counters for time series output
-		model->n_quarantine_events++;
+			// Increment counters for time series output
+			model->n_self_quarantine_events++;
 
-		if(indiv->app_user == TRUE){
-			model->n_quarantine_events_app_user++;
-			model->n_quarantine_app_user++;
+			if(indiv->app_user == TRUE){
+				model->n_self_quarantine_events_app_user++;
+				model->n_self_quarantine_app_user++;
+				if(indiv->status > SUSCEPTIBLE)
+					model->n_self_quarantine_app_user_infected++;
+				if(indiv->status == RECOVERED)
+					model->n_self_quarantine_app_user_recovered++;
+			}
 			if(indiv->status > SUSCEPTIBLE)
-				model->n_quarantine_app_user_infected++;
+				model->n_self_quarantine_infected++;
 			if(indiv->status == RECOVERED)
-				model->n_quarantine_app_user_recovered++;
-		}
-		if(indiv->status > SUSCEPTIBLE)
-			model->n_quarantine_infected++;
-		if(indiv->status == RECOVERED)
-			model->n_quarantine_recovered++;
-	}
-	else
-	{
-		indiv->quarantined              = FALSE;
-		indiv->infection_events->times[QUARANTINED]  = UNKNOWN;
-		indiv->quarantine_event         = NULL;
-		indiv->quarantine_release_event = NULL;
+				model->n_self_quarantine_recovered++;
+			break;
 
-		// Increment counters for time series output
-		model->n_quarantine_release_events++;
+		case UNDER_CENTRALIZED_QUARANTINE:
+			indiv->quarantined             							= status;
+			indiv->infection_events->times[CENTRALIZED_QUARANTINED] = time; //TODO
 
-		if(indiv->app_user == TRUE){
-			model->n_quarantine_app_user--;
-			model->n_quarantine_release_events_app_user++;
+			// Increment counters for time series output
+			model->n_centralized_quarantine_events++;
+
+			if(indiv->app_user == TRUE){
+				model->n_centralized_quarantine_events_app_user++;
+				model->n_centralized_quarantine_app_user++;
+				if(indiv->status > SUSCEPTIBLE)
+					model->n_centralized_quarantine_app_user_infected++;
+				if(indiv->status == RECOVERED)
+					model->n_centralized_quarantine_app_user_recovered++;
+			}
 			if(indiv->status > SUSCEPTIBLE)
-				model->n_quarantine_app_user_infected--;
+				model->n_centralized_quarantine_infected++;
 			if(indiv->status == RECOVERED)
-				model->n_quarantine_app_user_recovered--;
-		}
-		if(indiv->status > SUSCEPTIBLE)
-			model->n_quarantine_infected--;
-		if(indiv->status == RECOVERED)
-			model->n_quarantine_recovered--;
+				model->n_centralized_quarantine_recovered++;
+			break;
+
+		case NOT_QUARANTINED:
+			indiv->quarantined              						= status;
+			indiv->infection_events->times[SELF_QUARANTINED]		= UNKNOWN;
+			indiv->infection_events->times[CENTRALIZED_QUARANTINED]	= UNKNOWN;
+			indiv->quarantine_event         						= NULL; //TODO
+			indiv->quarantine_release_event 						= NULL; //TODO
+
+			// Increment counters for time series output
+			if( indiv->quarantine_event == SELF_QUARANTINED )
+			{
+				model->n_self_quarantine_release_events++;
+				if(indiv->app_user == TRUE){
+				model->n_self_quarantine_app_user--;
+				model->n_self_quarantine_release_events_app_user++;
+				if(indiv->status > SUSCEPTIBLE)
+					model->n_self_quarantine_app_user_infected--;
+				if(indiv->status == RECOVERED)
+					model->n_self_quarantine_app_user_recovered--;
+				}
+				if(indiv->status > SUSCEPTIBLE)
+					model->n_self_quarantine_infected--;
+				if(indiv->status == RECOVERED)
+					model->n_self_quarantine_recovered--;
+			}
+			if( indiv->quarantine_event == CENTRALIZED_QUARANTINED )
+			{
+				model->n_centralized_quarantine_release_events++;
+				if(indiv->app_user == TRUE){
+				model->n_centralized_quarantine_app_user--;
+				model->n_centralized_quarantine_release_events_app_user++;
+				if(indiv->status > SUSCEPTIBLE)
+					model->n_centralized_quarantine_app_user_infected--;
+				if(indiv->status == RECOVERED)
+					model->n_centralized_quarantine_app_user_recovered--;
+				}
+				if(indiv->status > SUSCEPTIBLE)
+					model->n_centralized_quarantine_infected--;
+				if(indiv->status == RECOVERED)
+					model->n_centralized_quarantine_recovered--;
+			}
+			break;
 	}
 	update_random_interactions( indiv, params );
+
+	// if( status )
+	// {
+	// 	indiv->quarantined             = TRUE;
+	// 	indiv->infection_events->times[QUARANTINED] = time;
+
+	// 	// Increment counters for time series output
+	// 	model->n_quarantine_events++;
+
+	// 	if(indiv->app_user == TRUE){
+	// 		model->n_quarantine_events_app_user++;
+	// 		model->n_quarantine_app_user++;
+	// 		if(indiv->status > SUSCEPTIBLE)
+	// 			model->n_quarantine_app_user_infected++;
+	// 		if(indiv->status == RECOVERED)
+	// 			model->n_quarantine_app_user_recovered++;
+	// 	}
+	// 	if(indiv->status > SUSCEPTIBLE)
+	// 		model->n_quarantine_infected++;
+	// 	if(indiv->status == RECOVERED)
+	// 		model->n_quarantine_recovered++;
+	// }
+	// else
+	// {
+	// 	indiv->quarantined              = FALSE;
+	// 	indiv->infection_events->times[QUARANTINED]  = UNKNOWN;
+	// 	indiv->quarantine_event         = NULL;
+	// 	indiv->quarantine_release_event = NULL;
+
+	// 	// Increment counters for time series output
+	// 	model->n_quarantine_release_events++;
+
+	// 	if(indiv->app_user == TRUE){
+	// 		model->n_quarantine_app_user--;
+	// 		model->n_quarantine_release_events_app_user++;
+	// 		if(indiv->status > SUSCEPTIBLE)
+	// 			model->n_quarantine_app_user_infected--;
+	// 		if(indiv->status == RECOVERED)
+	// 			model->n_quarantine_app_user_recovered--;
+	// 	}
+	// 	if(indiv->status > SUSCEPTIBLE)
+	// 		model->n_quarantine_infected--;
+	// 	if(indiv->status == RECOVERED)
+	// 		model->n_quarantine_recovered--;
+	// }
 }
 
 /*****************************************************************************************
@@ -217,6 +315,19 @@ void update_random_interactions( individual *indiv, parameters* params )
 			case HOSPITALISED_RECOVERING: n = params->hospitalised_daily_interactions; break;
 			default: 			n = ifelse( lockdown, n * params->lockdown_random_network_multiplier, n );
 		}
+
+		if( indiv->health_code_user )
+		{
+			// TODO
+			switch( indiv->health_code_state )
+			{
+				// case GREEN:			n = 0; 										 break;
+				// case YELLOW:		n = params->hospitalised_daily_interactions; break;
+				// case RED:			n = params->hospitalised_daily_interactions; break;
+				// case ORANGE: 		n = params->hospitalised_daily_interactions; break;
+				// default: 			n = ifelse( lockdown, n * params->lockdown_random_network_multiplier, n );
+			}
+		}
 	}
 	else
 		n = params->quarantined_daily_interactions;
@@ -275,10 +386,15 @@ void set_vaccine_status( individual* indiv, short current_status, short next_sta
 ******************************************************************************************/
 void set_recovered( individual *indiv, parameters* params, int time, model *model )
 {
-	if( indiv->quarantined == TRUE){
-		model->n_quarantine_recovered++;
+	if( indiv->quarantined == UNDER_SELF_QUARANTINE){
+		model->n_self_quarantine_recovered++;
 		if(indiv->app_user == TRUE)
-			model->n_quarantine_app_user_recovered++;
+			model->n_self_quarantine_app_user_recovered++;
+	}
+	if( indiv->quarantined == UNDER_CENTRALIZED_QUARANTINE){
+		model->n_centralized_quarantine_recovered++;
+		if(indiv->app_user == TRUE)
+			model->n_centralized_quarantine_app_user_recovered++;
 	}
 
 	indiv->status        = RECOVERED;
@@ -438,6 +554,53 @@ void destroy_individual( individual *indiv )
 		free( temporary_infection_event );
 	}
 }
+
+
+
+// HEALTHCODE
+// TODO
+
+/*****************************************************************************************
+*  Name:		set_health_code_user
+*  Description: sets a person as a health code system user
+*  Returns:		void
+******************************************************************************************/
+void set_health_code_user( individual *indiv, parameters* params, int time )
+{
+	indiv->health_code_user = TRUE;
+}
+
+
+// HEALTHCODE
+/*****************************************************************************************
+*  Name:		set_health_code_status
+*  Description: sets a person's health code status (green, yellow, red, orange)
+*  Returns:		void
+******************************************************************************************/
+void set_health_code_status( individual *indiv, parameters* params, int time, int status, model *model)
+{
+	indiv->health_code_state = status;
+	update_random_interactions( indiv, params ); //TODO: 修改这个函数的逻辑，加入health code判断
+
+	switch( status )
+	{
+		case GREEN:			set_quarantine_status(indiv, params, time, FALSE, model) ;break;
+		case YELLOW:		/* TODO 居家隔离 */; break;
+		// TODO: Modify this logic to: the person to be quarantined after a while of health code state changed
+		case RED:			set_quarantine_status(indiv, params, time, TRUE, model) ;break;
+		case ORANGE: 		/* TODO */; break;
+		// case BLUE: 			n = params->hospitalised_daily_interactions; break; //TODO
+	}
+}
+
+
+
+
+
+
+
+
+
 
 /*****************************************************************************************
 *  Name:		count_infection_events

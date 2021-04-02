@@ -184,39 +184,40 @@ void transmit_virus_by_type(
 
 	for( day = model->time-1; day >= max( 0, model->time - MAX_INFECTIOUS_PERIOD ); day-- )
 	{
-		n_infected  = list->n_daily_current[ day];
+		n_infected  = list->n_daily_current[ day];  //这实际上应该是 n_event in the day
 		next_event  = list->events[ day ];
 
 		for( idx = 0; idx < n_infected; idx++ )
 		{
 			event      = next_event;
 			next_event = event->next;
-			infector   = event->individual;
+			infector   = event->individual; //这个实际上也不一定是“感染者”，只是这个event对应的 "individual"
 
-			t_infect = model->time - time_infected_infection_event( infector->infection_events );
+			t_infect = model->time - time_infected_infection_event( infector->infection_events ); // 同理  //TODO：看一下这个model->time是什么意思
 			if( t_infect >= MAX_INFECTIOUS_PERIOD )
 				continue;
 
-			n_interaction = infector->n_interactions[ model->interaction_day_idx ];
+			n_interaction = infector->n_interactions[ model->interaction_day_idx ]; //这一天内这个individual一共有多少次interaction
 			if( n_interaction > 0 )
 			{
-				interaction   = infector->interactions[ model->interaction_day_idx ];
-				infector_mult = infector->infectiousness_multiplier * infector->infection_events->strain_multiplier;
+				interaction   = infector->interactions[ model->interaction_day_idx ]; //拿出来这个individual今天的第一个interaction
+				infector_mult = infector->infectiousness_multiplier * infector->infection_events->strain_multiplier; //（算法的内容，不用管）
 
 				for( jdx = 0; jdx < n_interaction; jdx++ )
 				{
-					if( interaction->individual->status == SUSCEPTIBLE )
+					if( interaction->individual->status == SUSCEPTIBLE ) //如果这次interaction的那个接触者是"易感者"
 					{
 						hazard_rate   = list->infectious_curve[interaction->type][ t_infect - 1 ] * infector_mult;
                         interaction->individual->hazard -= hazard_rate;
 
 						if( interaction->individual->hazard < 0 )
 						{
+							//算法算完之后说他不幸成为了命中感染概率的那个人，创建感染事件
 							new_infection( model, interaction->individual, infector, interaction->network_id );
 							interaction->individual->infection_events->infector_network = interaction->type;
 						}
 					}
-					interaction = interaction->next;
+					interaction = interaction->next; //拿出来下一个interaction
 				}
 			}
 		}
@@ -336,11 +337,22 @@ void transition_one_disese_event(
 	if( indiv->next_disease_event != NULL )
 		indiv->current_disease_event = indiv->next_disease_event;
 
-	if( indiv->quarantined == TRUE){
+	// HEALTHCODE
+	if( indiv->quarantined == UNDER_SELF_QUARANTINE ){
 		if(from == SUSCEPTIBLE){
-			model->n_quarantine_infected++;
+			model->n_self_quarantine_infected++;
 			if(indiv->app_user == TRUE){
-				model->n_quarantine_app_user_infected++;
+				model->n_self_quarantine_app_user_infected++;
+			}
+		}
+	}
+	
+	// HEALTHCODE
+	if( indiv->quarantined == UNDER_CENTRALIZED_QUARANTINE ){
+		if(from == SUSCEPTIBLE){
+			model->n_centralized_quarantine_infected++;
+			if(indiv->app_user == TRUE){
+				model->n_centralized_quarantine_app_user_infected++;
 			}
 		}
 	}

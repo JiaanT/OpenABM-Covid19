@@ -105,8 +105,7 @@ void destroy_model( model *model )
 	{
 		interaction_block = next_interaction_block;
 		next_interaction_block = interaction_block->next;
-		if( interaction_block->interactions != NULL )
-			free( interaction_block->interactions );
+		free( interaction_block->interactions );
 		free( interaction_block );
 	}
 	free( model->events );
@@ -146,6 +145,8 @@ void destroy_model( model *model )
     }
     destroy_risk_scores( model );
     free( model );
+
+    gsl_rng_free( rng );
 }
 
 /*****************************************************************************************
@@ -498,6 +499,8 @@ event* new_event( model *model )
 }
 
 
+// HEALTHCODE
+// TODO: 根据flu症状修改健康码逻辑
 /*****************************************************************************************
 *  Name:		flu_infections
 *  Description: Randomly pick people from the population to go down with flu, they

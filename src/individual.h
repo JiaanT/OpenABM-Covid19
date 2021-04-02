@@ -41,7 +41,7 @@ struct individual{
 	event *next_disease_event;
 	infection_event *infection_events;
 
-	int quarantined;
+	int quarantined; //PROGRESS: check the references
 	event *quarantine_event;
 	event *quarantine_release_event;
 	int quarantine_test_result;
@@ -68,6 +68,9 @@ struct individual{
 	short vaccine_status;
 	short vaccine_status_next;
 	event *vaccine_wane_event;
+
+	int health_code_user;
+	int health_code_state;
 };
 
 struct interaction{

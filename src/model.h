@@ -79,17 +79,29 @@ struct model{
 
 	int **transition_time_distributions;
 
-	long n_quarantine_days;
+	long n_self_quarantine_days; //TODO 看一下这个变量是干什么的，判断一下是否需要区分self、centralized
 
-	long n_quarantine_app_user;
-	long n_quarantine_infected;
-	long n_quarantine_recovered;
-	long n_quarantine_app_user_infected;
-	long n_quarantine_app_user_recovered;
-	long n_quarantine_events;
-	long n_quarantine_events_app_user;
-	long n_quarantine_release_events;
-	long n_quarantine_release_events_app_user;
+	long n_self_quarantine_app_user;
+	long n_self_quarantine_infected;
+	long n_self_quarantine_recovered;
+	long n_self_quarantine_app_user_infected;
+	long n_self_quarantine_app_user_recovered;
+	long n_self_quarantine_events;
+	long n_self_quarantine_events_app_user;
+	long n_self_quarantine_release_events;
+	long n_self_quarantine_release_events_app_user;
+
+	long n_centralized_quarantine_days;
+
+	long n_centralized_quarantine_app_user;
+	long n_centralized_quarantine_infected;
+	long n_centralized_quarantine_recovered;
+	long n_centralized_quarantine_app_user_infected;
+	long n_centralized_quarantine_app_user_recovered;
+	long n_centralized_quarantine_events;
+	long n_centralized_quarantine_events_app_user;
+	long n_centralized_quarantine_release_events;
+	long n_centralized_quarantine_release_events_app_user;
 
 	long n_population_by_age[ N_AGE_GROUPS ];
 	long n_vaccinated_fully;

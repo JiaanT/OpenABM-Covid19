@@ -1039,6 +1039,9 @@ void intervention_index_case_symptoms_to_positive(
 	}
 }
 
+
+// TODO: Modify the intervention on symptems:
+// TODO: 
 /*****************************************************************************************
 *  Name:		intervention_on_symptoms
 *  Description: The interventions performed upon showing symptoms of a flu-like symptoms

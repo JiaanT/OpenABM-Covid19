@@ -584,7 +584,8 @@ void write_output_files(model *model, parameters *params)
 *  Name:		write_quarantine_reasons
 *  Description: Write (csv) files of reasons individuals are quarantined
 ******************************************************************************************/
-
+//TODO: QUARANTINE reasons
+//TODO 这个一定要处理！
 void write_quarantine_reasons(model *model, parameters *params)
 {
 	char output_file_name[INPUT_CHAR_LEN];
@@ -631,7 +632,7 @@ void write_quarantine_reasons(model *model, parameters *params)
 	{
 		indiv = &(model->population[idx]);
 		
-		if(indiv->quarantined == TRUE){
+		if(indiv->quarantined == UNDER_CENTRALIZED_QUARANTINE || indiv->quarantined == UNDER_CENTRALIZED_QUARANTINE){
 			
 			for(i = 0; i < N_QUARANTINE_REASONS; i++)
 				quarantine_reasons[i] = FALSE;
@@ -1047,130 +1048,6 @@ void write_ward_data( model *model)
 
 	fclose(ward_output_file);
 
-}
-
-/*****************************************************************************************
-*  Name:		get_transmissions
-*  Description: get_transmissions details
-******************************************************************************************/
-void get_transmissions(
-	model *model,
-	long *ID_recipient,
-	int *age_group_recipient,
-	long *house_no_recipient,
-	int *occupation_network_recipient,
-	int *worker_type_recipient,
-	int *hospital_state_recipient,
-	int *infector_network,
-	int *infector_network_id,
-	int *generation_time,
-	long *ID_source,
-	int *age_group_source,
-	long *house_no_source,
-	int *occupation_network_source,
-	int *worker_type_source,
-	int *hospital_state_source,
-	int *time_infected_source,
-	int *status_source,
-	int *time_infected,
-	int *time_presymptomatic,
-	int *time_presymptomatic_mild,
-	int *time_presymptomatic_severe,
-	int *time_symptomatic,
-	int *time_symptomatic_mild,
-	int *time_symptomatic_severe,
-	int *time_asymptomatic,
-	int *time_hospitalised,
-	int *time_critical,
-	int *time_hospitalised_recovering,
-	int *time_death,
-	int *time_recovered,
-	int *time_susceptible,
-	int *is_case,
-	float *strain_multiplier
-)
-{
-	individual *indiv;
-	infection_event *infection_event;
-	long pdx;
-	long idx = 0;
-
-	for( pdx = 0; pdx < model->params->n_total; pdx++ )
-	{
-		indiv = &(model->population[pdx]);
-		infection_event = indiv->infection_events;
-
-		while(infection_event != NULL)
-		{
-			if( time_infected_infection_event(infection_event) != UNKNOWN )
-			{
-				ID_recipient[ idx ] = indiv->idx;
-				age_group_recipient[ idx ] = indiv->age_group;
-				house_no_recipient[ idx ] = indiv->house_no;
-				occupation_network_recipient[ idx ] = indiv->occupation_network;
-				worker_type_recipient[ idx ] = indiv->worker_type;
-				hospital_state_recipient[ idx ] = indiv->hospital_state;
-				infector_network[ idx ] = infection_event->infector_network;
-				infector_network_id[ idx ] = infection_event->network_id;
-				generation_time[ idx ] = time_infected_infection_event( infection_event ) - infection_event->time_infected_infector;
-				ID_source[ idx ] = infection_event->infector->idx;
-				age_group_source[ idx ] = infection_event->infector->age_group;
-				house_no_source[ idx ] = infection_event->infector->house_no;
-				occupation_network_source[ idx ] = infection_event->infector->occupation_network;
-				worker_type_source[ idx ] = infection_event->infector->worker_type;
-				hospital_state_source[ idx ] = infection_event->infector_hospital_state;
-				time_infected_source[ idx ] = infection_event->time_infected_infector;
-				status_source[ idx ] = infection_event->infector_status;
-				time_infected[ idx ] = time_infected_infection_event( infection_event );
-				time_presymptomatic[ idx ] = max( infection_event->times[PRESYMPTOMATIC], infection_event->times[PRESYMPTOMATIC_MILD] );
-				time_presymptomatic_mild[ idx ] = infection_event->times[PRESYMPTOMATIC_MILD];
-				time_presymptomatic_severe[ idx ] = infection_event->times[PRESYMPTOMATIC];
-				time_symptomatic[ idx ] = max(infection_event->times[SYMPTOMATIC], infection_event->times[SYMPTOMATIC_MILD]);
-				time_symptomatic_mild[ idx ] = infection_event->times[SYMPTOMATIC_MILD];
-				time_symptomatic_severe[ idx ] = infection_event->times[SYMPTOMATIC];
-				time_asymptomatic[ idx ] = infection_event->times[ASYMPTOMATIC];
-				time_hospitalised[ idx ] = infection_event->times[HOSPITALISED];
-				time_critical[ idx ] = infection_event->times[CRITICAL];
-				time_hospitalised_recovering[ idx ] = infection_event->times[HOSPITALISED_RECOVERING];
-				time_death[ idx ] = infection_event->times[DEATH];
-				time_recovered[ idx ] = infection_event->times[RECOVERED];
-				time_susceptible[ idx ] = infection_event->times[SUSCEPTIBLE];
-				is_case[ idx ] = infection_event->is_case;
-				strain_multiplier[ idx ] = infection_event->strain_multiplier;
-				idx++;
-			}
-			infection_event = infection_event->next;
-		}
-	}
-}
-
-/*****************************************************************************************
-*  Name:		get_n_transmissions
-*  Description: get the number of transmissions
-******************************************************************************************/
-long get_n_transmissions(
-	model *model
-)
-{
-	individual *indiv;
-	infection_event *infection_event;
-	long pdx;
-	long idx = 0;
-
-	for( pdx = 0; pdx < model->params->n_total; pdx++ )
-	{
-		indiv = &(model->population[pdx]);
-		infection_event = indiv->infection_events;
-
-		while(infection_event != NULL)
-		{
-			if( time_infected_infection_event(infection_event) != UNKNOWN )
-				idx++;
-
-			infection_event = infection_event->next;
-		}
-	}
-	return idx;
 }
 
 /*****************************************************************************************
