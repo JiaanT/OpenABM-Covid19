@@ -227,11 +227,13 @@ int get_model_param_allow_clinical_diagnosis(model *pmodel);
 int get_model_param_self_quarantine_household_on_symptoms(model *pmodel); //HealthCode
 int get_model_param_self_quarantine_household_on_positive(model *pmodel); //HealthCode
 int get_model_param_centralized_quarantine_household_on_positive(model *pmodel); //HealthCode
-int get_model_param_self_quarantine_household_on_traced_symptoms(model *pmodel); //PROGRESS
-int get_model_param_quarantine_household_on_traced_positive(model *pmodel);
-int get_model_param_quarantine_household_contacts_on_positive(model *pmodel);
+int get_model_param_self_quarantine_household_on_traced_symptoms(model *pmodel); //HealthCode
+int get_model_param_self_quarantine_household_on_traced_positive(model *pmodel); //HealthCode
+int get_model_param_centralized_quarantine_household_on_traced_positive(model *pmodel); //HealthCode
+int get_model_param_self_quarantine_household_contacts_on_positive(model *pmodel); //HealthCode
+int get_model_param_centralized_quarantine_household_contacts_on_positive(model *pmodel); //HealthCode
 int set_model_param_relative_transmission( model *pmodel, double value, int type );
-int get_model_param_quarantine_household_contacts_on_symptoms(model *pmodel);
+int get_model_param_self_quarantine_household_contacts_on_symptoms(model *pmodel); //HealthCode
 int get_model_param_test_on_symptoms(model *pmodel);
 int get_model_param_test_release_on_negative(model *pmodel);
 int get_model_param_test_on_traced(model *pmodel);
@@ -267,12 +269,15 @@ int set_model_param_quarantine_on_traced(model *pmodel, int value);
 int set_model_param_traceable_interaction_fraction(model *pmodel, double value);
 int set_model_param_tracing_network_depth(model *pmodel, int value);
 int set_model_param_allow_clinical_diagnosis(model *pmodel, int value);
-int set_model_param_quarantine_household_on_symptoms(model *pmodel, int value);
-int set_model_param_quarantine_household_on_positive(model *pmodel, int value);
-int set_model_param_quarantine_household_on_traced_symptoms(model *pmodel, int value);
-int set_model_param_quarantine_household_on_traced_positive(model *pmodel, int value);
-int set_model_param_quarantine_household_contacts_on_positive(model *pmodel, int value);
-int set_model_param_quarantine_household_contacts_on_symptoms(model *pmodel, int value);
+int set_model_param_self_quarantine_household_on_symptoms(model *pmodel, int value); //HealthCode
+int set_model_param_self_quarantine_household_on_positive(model *pmodel, int value); //HealthCode
+int set_model_param_centralized_quarantine_household_on_positive(model *pmodel, int value); //HealthCode
+int set_model_param_self_quarantine_household_on_traced_symptoms(model *pmodel, int value); //HealthCode
+int set_model_param_self_quarantine_household_on_traced_positive(model *pmodel, int value); //HealthCode
+int set_model_param_centralized_quarantine_household_on_traced_positive(model *pmodel, int value); //HealthCode
+int set_model_param_self_quarantine_household_contacts_on_positive(model *pmodel, int value); //HealthCode
+int set_model_param_centralized_quarantine_household_contacts_on_positive(model *pmodel, int value); //HealthCode
+int set_model_param_self_quarantine_household_contacts_on_symptoms(model *pmodel, int value); //HealthCode
 int set_model_param_test_on_symptoms(model *pmodel, int value);
 int set_model_param_test_release_on_negative(model *pmodel, int value);
 int set_model_param_test_on_traced(model *pmodel, int value);

@@ -468,39 +468,57 @@ int get_model_param_centralized_quarantine_household_on_positive(model *model)
 }
 
 /*****************************************************************************************
-*  Name:		get_model_param_quarantine_household_on_traced_positive
+*  Name:		get_model_param_self_quarantine_household_on_traced_positive
 *  Description: Gets the value of an int parameter
 ******************************************************************************************/
-int get_model_param_quarantine_household_on_traced_positive(model *model)
+int get_model_param_self_quarantine_household_on_traced_positive(model *model)
 {
-    return model->params->quarantine_household_on_traced_positive;
+    return model->params->self_quarantine_household_on_traced_positive;
 }
 
 /*****************************************************************************************
-*  Name:		get_model_param_quarantine_household_on_traced_symptoms
+*  Name:		get_model_param_centralized_quarantine_household_on_traced_positive
 *  Description: Gets the value of an int parameter
 ******************************************************************************************/
-int get_model_param_quarantine_household_on_traced_symptoms(model *model)
+int get_model_param_centralized_quarantine_household_on_traced_positive(model *model)
 {
-    return model->params->quarantine_household_on_traced_symptoms;
+    return model->params->centralized_quarantine_household_on_traced_positive;
 }
 
 /*****************************************************************************************
-*  Name:		get_model_param_quarantine_household_contacts_on_positive
+*  Name:		get_model_param_self_quarantine_household_on_traced_symptoms
 *  Description: Gets the value of an int parameter
 ******************************************************************************************/
-int get_model_param_quarantine_household_contacts_on_positive(model *model)
+int get_model_param_self_quarantine_household_on_traced_symptoms(model *model)
 {
-    return model->params->quarantine_household_contacts_on_positive;
+    return model->params->self_quarantine_household_on_traced_symptoms;
 }
 
 /*****************************************************************************************
-*  Name:                get_model_param_quarantine_household_contacts_on_symptoms
+*  Name:		get_model_param_self_quarantine_household_contacts_on_positive
 *  Description: Gets the value of an int parameter
 ******************************************************************************************/
-int get_model_param_quarantine_household_contacts_on_symptoms(model *model)
+int get_model_param_self_quarantine_household_contacts_on_positive(model *model)
 {
-    return model->params->quarantine_household_contacts_on_symptoms;
+    return model->params->self_quarantine_household_contacts_on_positive;
+}
+
+/*****************************************************************************************
+*  Name:		get_model_param_centralized_quarantine_household_contacts_on_positive
+*  Description: Gets the value of an int parameter
+******************************************************************************************/
+int get_model_param_centralized_quarantine_household_contacts_on_positive(model *model)
+{
+    return model->params->centralized_quarantine_household_contacts_on_positive;
+}
+
+/*****************************************************************************************
+*  Name:                get_model_param_self_quarantine_household_contacts_on_symptoms
+*  Description: Gets the value of an int parameter
+******************************************************************************************/
+int get_model_param_self_quarantine_household_contacts_on_symptoms(model *model)
+{
+    return model->params->self_quarantine_household_contacts_on_symptoms;
 }
 
 /*****************************************************************************************
@@ -802,62 +820,93 @@ int set_model_param_allow_clinical_diagnosis( model *model, int value )
 }
 
 /*****************************************************************************************
-*  Name:		set_model_param_quarantine_household_on_symptoms
+*  Name:		set_model_param_self_quarantine_household_on_symptoms
 *  Description: Sets the value of parameter
 ******************************************************************************************/
-int set_model_param_quarantine_household_on_symptoms( model *model, int value )
+int set_model_param_self_quarantine_household_on_symptoms( model *model, int value )
 {
-    model->params->quarantine_household_on_symptoms = value;
+    model->params->self_quarantine_household_on_symptoms = value;
     return TRUE;
 }
 
 /*****************************************************************************************
-*  Name:		set_model_param_quarantine_household_on_positive
+*  Name:		set_model_param_self_quarantine_household_on_positive
 *  Description: Sets the value of parameter
 ******************************************************************************************/
-int set_model_param_quarantine_household_on_positive( model *model, int value )
+int set_model_param_self_quarantine_household_on_positive( model *model, int value )
 {
-    model->params->quarantine_household_on_positive = value;
+    model->params->self_quarantine_household_on_positive = value;
     return TRUE;
 }
 
 /*****************************************************************************************
-*  Name:		set_model_param_quarantine_household_on_traced_positive
+*  Name:		set_model_param_centralized_quarantine_household_on_positive
 *  Description: Sets the value of parameter
 ******************************************************************************************/
-int set_model_param_quarantine_household_on_traced_positive( model *model, int value )
+int set_model_param_centralized_quarantine_household_on_positive( model *model, int value )
 {
-    model->params->quarantine_household_on_traced_positive = value;
+    model->params->centralized_quarantine_household_on_positive = value;
     return TRUE;
 }
 
 /*****************************************************************************************
-*  Name:		set_model_param_quarantine_household_on_traced_symptoms
+*  Name:		set_model_param_self_quarantine_household_on_traced_positive
 *  Description: Sets the value of parameter
 ******************************************************************************************/
-int set_model_param_quarantine_household_on_traced_symptoms( model *model, int value )
+int set_model_param_self_quarantine_household_on_traced_positive( model *model, int value )
 {
-    model->params->quarantine_household_on_traced_symptoms = value;
+    model->params->self_quarantine_household_on_traced_positive = value;
     return TRUE;
 }
 
 /*****************************************************************************************
-*  Name:		set_model_param_quarantine_household_contacts_on_positive
+*  Name:		set_model_param_centralized_quarantine_household_on_traced_positive
 *  Description: Sets the value of parameter
 ******************************************************************************************/
-int set_model_param_quarantine_household_contacts_on_positive( model *model, int value )
+int set_model_param_centralized_quarantine_household_on_traced_positive( model *model, int value )
 {
-    model->params->quarantine_household_contacts_on_positive = value;
+    model->params->centralized_quarantine_household_on_traced_positive = value;
     return TRUE;
 }
 
 /*****************************************************************************************
-*  Name:                set_model_param_quarantine_household_contacts_on_symptoms
+*  Name:		set_model_param_self_quarantine_household_on_traced_symptoms
 *  Description: Sets the value of parameter
 ******************************************************************************************/
-int set_model_param_quarantine_household_contacts_on_symptoms( model *model, int value )
+int set_model_param_self_quarantine_household_on_traced_symptoms( model *model, int value )
 {
-    model->params->quarantine_household_contacts_on_symptoms = value;
+    model->params->self_quarantine_household_on_traced_symptoms = value;
+    return TRUE;
+}
+
+
+/*****************************************************************************************
+*  Name:		set_model_param_selfquarantine_household_contacts_on_positive
+*  Description: Sets the value of parameter
+******************************************************************************************/
+int set_model_param_self_quarantine_household_contacts_on_positive( model *model, int value )
+{
+    model->params->self_quarantine_household_contacts_on_positive = value;
+    return TRUE;
+}
+
+/*****************************************************************************************
+*  Name:		set_model_param_centralized_quarantine_household_contacts_on_positive
+*  Description: Sets the value of parameter
+******************************************************************************************/
+int set_model_param_centralized_quarantine_household_contacts_on_positive( model *model, int value )
+{
+    model->params->centralized_quarantine_household_contacts_on_positive = value;
+    return TRUE;
+}
+
+/*****************************************************************************************
+*  Name:                set_model_param_self_quarantine_household_contacts_on_symptoms
+*  Description: Sets the value of parameter
+******************************************************************************************/
+int set_model_param_self_quarantine_household_contacts_on_symptoms( model *model, int value )
+{
+    model->params->self_quarantine_household_contacts_on_symptoms = value;
     return TRUE;
 }
 
