@@ -28,9 +28,9 @@ enum EVENT_TYPES{
 	HOSPITALISED_RECOVERING,
 	RECOVERED,
 	DEATH,
-	SELF_QUARANTINED,
-	CENTRALIZED_QUARANTINED,
-	QUARANTINE_RELEASE,
+	SELF_QUARANTINED,  // HEALTHCODE
+	CENTRALIZED_QUARANTINED,  // HEALTHCODE
+	QUARANTINE_RELEASE,  // HEALTHCODE
 	TEST_TAKE,
 	TEST_RESULT,
 	CASE,
@@ -62,10 +62,13 @@ enum TRANSITIONS_TYPES{
 	CRITICAL_DEATH,
 	CRITICAL_HOSPITALISED_RECOVERING,
 	HOSPITALISED_RECOVERING_RECOVERED,
-	SYMPTOMATIC_QUARANTINE,
-	TRACED_QUARANTINE_SYMPTOMS,
-	TRACED_QUARANTINE_POSITIVE,
-	TEST_RESULT_QUARANTINE,
+	SYMPTOMATIC_SELF_QUARANTINE,  // HealthCode: individuals to self-quarantine upon symptoms //只修改了名字（原来叫SYMPTOMATIC_QUARANTINE）
+	TRACED_SELF_QUARANTINE_SYMPTOMS,  // HealthCode: individuals (who are traced after a contact reported symptoms) to be self-quarantined //HealthCode: 只修改了名字（原来叫TRACED_QUARANTINE_SYMPTOMS）
+	//HealthCode: 原来只有一个（TRACED_QUARANTINE_POSITIVE）
+	TRACED_SELF_QUARANTINE_POSITIVE,  // HealthCode: individuals (who are traced after a contact tested positive) to be self-quarantined
+	TRACED_CENTRALIZED_QUARANTINE_POSITIVE,  // HealthCode: individuals (who are traced after a contact tested positive) to be centralized-quarantined
+	TEST_RESULT_QUARANTINE_SELF,  // HealthCode: individuals to be self-quarantined after tested positive
+	TEST_RESULT_QUARANTINE_CENTRALIZED,  // HealthCode: individuals to be centralized-quarantined after tested positive
 	RECOVERED_SUSCEPTIBLE,
 	VACCINE_PROTECTED_SUSCEPTIBLE,
 	VACCINE_PROTECTED_SYMPTOMS_VACCINE_WANED,
@@ -225,6 +228,8 @@ enum HEALTH_CODE_STATUS{
 	BLUE
 };
 
+
+// HEALTHCODE
 enum QUARANTINE_STATUS{
 	NOT_QUARANTINED,
 	UNDER_SELF_QUARANTINE,

@@ -86,7 +86,8 @@ typedef struct{
 	double sd_time_critical_survive;        // sd time to survive if critical
 	double location_death_icu[N_AGE_GROUPS];// whether death occurs in the ICU or outside
 
-	int quarantined_daily_interactions; 	// number of interactions a quarantined person has
+	int self_quarantined_daily_interactions; 	// HealthCode: number of interactions a self-quarantined person has
+	int centralized_quarantined_daily_interactions; 	// HealthCode: number of interactions a ccentralized-quarantined person has
 	int hospitalised_daily_interactions; 	// number of interactions a hopsitalised person has
 
 	int quarantine_days;					// number of days of previous contacts to quarantine
@@ -107,17 +108,25 @@ typedef struct{
 	int trace_on_positive;   // contract trace on positive result
 	int retrace_on_positive; // repeat contract tracing on a positive test if already tested on symptoms
 
-	int quarantine_length_self;				// max length of quarantine if self-quarantine on symptoms
-	int quarantine_length_traced_symptoms;	// max length of quarantine if contact-traced from a index case with only symptoms
-	int quarantine_length_traced_positive;	// max length of quarantine if contact-traced from a index case with a positive test
-	int quarantine_length_positive;			// max length of quarantine if receive positive test result
-	double quarantine_dropout_self;			// daily dropout rate if self-quarantined
-	double quarantine_dropout_traced_symptoms;	// daily dropout rate if contact-traced from a index case with only symptoms
-	double quarantine_dropout_traced_positive;	// daily dropout rate if contact-traced rom a index case with a positive test
-	double quarantine_dropout_positive;     	// daily dropout rate if receive positive test result
+	int self_quarantine_length;				// max length of quarantine if self-quarantine on symptoms  //HealthCode: renamed(原名quarantine_length_self)
+	int self_quarantine_length_traced_symptoms;	// HealthCode: max length of self-quarantine if contact-traced from a index case with only symptoms
+	int self_quarantine_length_traced_positive;	// HealthCode: max length of centralized-quarantine if contact-traced from a index case with a positive test
+	int centralized_quarantine_length_traced_positive;	// HealthCode: max length of centralized-quarantine if contact-traced from a index case with a positive test
+	int self_quarantine_length_positive;			// HealthCode: max length of self-quarantine if receive positive test result
+	int centralized_quarantine_length_positive;			// HealthCode: max length of centralized-quarantine if receive positive test result
+	double self_quarantine_dropout;			// HealthCode: daily dropout rate if self-quarantined
+	double centralized_quarantine_dropout;			// HealthCode: daily dropout rate if centralized-quarantined
+	double self_quarantine_dropout_traced_symptoms;	// HealthCode: daily dropout rate if contact-traced from a index case with only symptoms  //HealthCode: renamed(原名quarantine_dropout_traced_symptoms)
+	double self_quarantine_dropout_traced_positive;	// HealthCode: daily dropout rate(self-quarantine) if contact-traced rom a index case with a positive test
+	double centralized_quarantine_dropout_traced_positive;	// HealthCode: daily dropout rate(centralized-quarantine) if contact-traced rom a index case with a positive test
+	double self_quarantine_dropout_positive;     	// HealthCode: daily dropout rate(self-quarantine) if receive positive test result
+	double centralized_quarantine_dropout_positive;     	// HealthCode: daily dropout rate(centralized-quarantine) if receive positive test result
 
-	double quarantine_compliance_traced_symptoms; // probability that someone complies with a amber quarantine message
-	double quarantine_compliance_traced_positive; // probability that someone complies with a red quarantine message
+	double self_quarantine_compliance_traced_symptoms; // HealthCode(renamed: quarantine_compliance_traced_symptoms): probability that someone complies with a amber quarantine message
+	
+	// TODO 这里这个服从概率肯定直接决定了有多少人会隔离，但是无法区分集中、居家隔离，因为算法中肯定直接取了个百分比没有做区分
+	double self_quarantine_compliance_traced_positive; // HealthCode: probability that someone complies with a red quarantine message(self-quarantine)
+	double centralized_quarantine_compliance_traced_positive; // HealthCode: probability that someone complies with a red quarantine message(centralized-quarantine)
 
 	int quarantine_on_traced;				// immediately quarantine those who are contact traced
 	int quarantine_smart_release_day;		// number of days until smart release on no contacts
