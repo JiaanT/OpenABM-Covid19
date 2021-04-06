@@ -329,8 +329,10 @@ void update_random_interactions( individual *indiv, parameters* params )
 			}
 		}
 	}
-	else
-		n = params->quarantined_daily_interactions;
+	else if( !indiv->quarantined == UNDER_SELF_QUARANTINE)  // HealthCode
+		n = params->self_quarantined_daily_interactions;
+	else   // HealthCode
+		n = params->centralized_quarantined_daily_interactions;
 
 	indiv->random_interactions = round_random( n );
 }
@@ -384,7 +386,7 @@ void set_vaccine_status( individual* indiv, short current_status, short next_sta
 *  Description: sets a person to recovered
 *  Returns:		void
 ******************************************************************************************/
-void set_recovered( individual *indiv, parameters* params, int time, model *model )
+void set_recovered( individual *indiv, parameters* params, int time, model *model )  //HealthCode
 {
 	if( indiv->quarantined == UNDER_SELF_QUARANTINE){
 		model->n_self_quarantine_recovered++;

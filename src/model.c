@@ -80,7 +80,8 @@ model* new_model( parameters *params )
 	set_up_trace_tokens( model_ptr );
 	set_up_risk_scores( model_ptr );
 
-	model_ptr->n_quarantine_days = 0;
+	model_ptr->n_self_quarantine_days = 0;  //HealthCode
+	model_ptr->n_centralized_quarantine_days = 0;  //HealthCode
 
 	return model_ptr;
 }
@@ -222,8 +223,9 @@ void set_up_networks( model *model )
 
 	model->random_network        = create_network( n_total, RANDOM );
 	model->random_network->edges = calloc( n_random_interactions, sizeof( edge ) );
-	model->random_network->skip_hospitalised = FALSE;
-	model->random_network->skip_quarantined  = FALSE;
+	model->random_network->skip_hospitalised = TRUE;  //HealthCode
+	model->random_network->skip_self_quarantined  = FALSE;  //HealthCode
+	model->random_network->skip_centralized_quarantined  = TRUE;  //HealthCode  //TODO
 	model->random_network->construction      = NETWORK_CONSTRUCTION_RANDOM_DEFAULT;
 	model->random_network->daily_fraction    = 1.0;
 	model->random_network->network_id        = RANDOM_NETWORK;
@@ -232,7 +234,8 @@ void set_up_networks( model *model )
 	model->household_network = create_network( n_total, HOUSEHOLD );
 	build_household_network_from_directroy( model->household_network, model->household_directory );
 	model->household_network->skip_hospitalised = TRUE;
-	model->household_network->skip_quarantined  = FALSE;
+	model->household_network->skip_self_quarantined  = FALSE;  //HealthCode
+	model->household_network->skip_centralized_quarantined  = TRUE;  //HealthCode  //TODO
 	model->household_network->construction      = NETWORK_CONSTRUCTION_HOUSEHOLD;
 	model->household_network->daily_fraction    = 1.0;
 	model->household_network->network_id        = HOUSEHOLD_NETWORK;
@@ -257,16 +260,27 @@ void set_up_counters( model *model ){
 	
 	int idx;
 
-	model->n_quarantine_infected = 0;
-	model->n_quarantine_recovered = 0;
-	model->n_quarantine_app_user = 0;
-	model->n_quarantine_app_user_infected = 0;
-	model->n_quarantine_app_user_recovered = 0;
+	model->n_self_quarantine_infected = 0;
+	model->n_self_quarantine_recovered = 0;
+	model->n_self_quarantine_app_user = 0;
+	model->n_self_quarantine_app_user_infected = 0;
+	model->n_self_quarantine_app_user_recovered = 0;
 	// Daily totals
-	model->n_quarantine_events = 0;
-	model->n_quarantine_events_app_user = 0;
-	model->n_quarantine_release_events = 0;
-	model->n_quarantine_release_events_app_user = 0;
+	model->n_self_quarantine_events = 0;
+	model->n_self_quarantine_events_app_user = 0;
+	model->n_self_quarantine_release_events = 0;
+	model->n_self_quarantine_release_events_app_user = 0;
+
+	model->n_centralized_quarantine_infected = 0;
+	model->n_centralized_quarantine_recovered = 0;
+	model->n_centralized_quarantine_app_user = 0;
+	model->n_centralized_quarantine_app_user_infected = 0;
+	model->n_centralized_quarantine_app_user_recovered = 0;
+	// Daily totals
+	model->n_centralized_quarantine_events = 0;
+	model->n_centralized_quarantine_events_app_user = 0;
+	model->n_centralized_quarantine_release_events = 0;
+	model->n_centralized_quarantine_release_events_app_user = 0;
 
 	model->n_vaccinated_fully = 0;
 	model->n_vaccinated_symptoms = 0;
@@ -285,10 +299,15 @@ void set_up_counters( model *model ){
 ******************************************************************************************/
 void reset_counters( model *model ){
 
-	model->n_quarantine_events = 0;
-	model->n_quarantine_events_app_user = 0;
-	model->n_quarantine_release_events = 0;
-	model->n_quarantine_release_events_app_user = 0;
+	model->n_self_quarantine_events = 0;
+	model->n_self_quarantine_events_app_user = 0;
+	model->n_self_quarantine_release_events = 0;
+	model->n_self_quarantine_release_events_app_user = 0;
+
+	model->n_centralized_quarantine_events = 0;
+	model->n_centralized_quarantine_events_app_user = 0;
+	model->n_centralized_quarantine_release_events = 0;
+	model->n_centralized_quarantine_release_events_app_user = 0;
 }
 
 /*****************************************************************************************
@@ -314,7 +333,8 @@ void set_up_occupation_network( model *model )
 
         model->occupation_network[network] = create_network( n_people, OCCUPATION );
         model->occupation_network[network]->skip_hospitalised = TRUE;
-        model->occupation_network[network]->skip_quarantined  = TRUE;
+        model->occupation_network[network]->skip_self_quarantined  = TRUE; //HealthCode
+        model->occupation_network[network]->skip_centralized_quarantined  = TRUE; //HealthCode
         model->occupation_network[network]->construction      = NETWORK_CONSTRUCTION_WATTS_STROGATZ;
         model->occupation_network[network]->daily_fraction = model->params->daily_fraction_work;
         model->occupation_network[network]->network_id = params->occupation_network_table->network_ids[network];
@@ -732,7 +752,9 @@ void build_random_network_user( model *model, network *network )
 
 		if( network->skip_hospitalised && is_in_hospital( indiv ) )
 			continue;
-		if( network->skip_quarantined && indiv->quarantined )
+		if( network->skip_self_quarantined && indiv->quarantined == UNDER_SELF_QUARANTINE)
+			continue;
+		if( network->skip_centralized_quarantined && indiv->quarantined == UNDER_CENTRALIZED_QUARANTINE)
 			continue;
 
 		for( jdx = 0; jdx < network->opt_int_array[ idx ]; jdx++ )
@@ -776,7 +798,8 @@ void add_interactions_from_network(
 	long all_idx = model->interaction_idx;
 	int day      = model->interaction_day_idx;
 	int skip_hospitalised = network->skip_hospitalised;
-	int skip_quarantined  = network->skip_quarantined;
+	int skip_self_quarantined  = network->skip_self_quarantined;
+	int skip_centralized_quarantined  = network->skip_centralized_quarantined;
 	double prob_drop      = 1.0 - network->daily_fraction;
 	interaction *inter1, *inter2;
 	individual *indiv1, *indiv2;
@@ -793,7 +816,9 @@ void add_interactions_from_network(
 			continue;
 		if( skip_hospitalised && ( is_in_hospital( indiv1 ) || is_in_hospital( indiv2 ) ) )
 			continue;
-		if( skip_quarantined && ( indiv1->quarantined || indiv2->quarantined ) )
+		if( skip_self_quarantined && ( indiv1->quarantined == UNDER_SELF_QUARANTINE || indiv2->quarantined == UNDER_SELF_QUARANTINE ) )
+			continue;
+		if( skip_centralized_quarantined && ( indiv1->quarantined == UNDER_CENTRALIZED_QUARANTINE || indiv2->quarantined == UNDER_CENTRALIZED_QUARANTINE ) )
 			continue;
 		if( prob_drop > 0 && gsl_ran_bernoulli( rng, prob_drop ) )
 			continue;
@@ -968,7 +993,8 @@ int add_user_network(
 	model *model,
 	int type,
 	int skip_hospitalised,
-	int skip_quarantined,
+	int skip_self_quarantined,
+	int skip_centralized_quarantined,
 	int construction,
 	double daily_fraction,
 	long n_edges,
@@ -1011,7 +1037,8 @@ int add_user_network(
 	user_network->edges = calloc(n_edges, sizeof(edge));
 	user_network->n_edges = n_edges;
 	user_network->skip_hospitalised = skip_hospitalised;
-	user_network->skip_quarantined  = skip_quarantined;
+	user_network->skip_self_quarantined  = skip_self_quarantined;
+	user_network->skip_centralized_quarantined  = skip_centralized_quarantined;
 	user_network->daily_fraction    = daily_fraction;
 	user_network->network_id		= network_id;
 	strcpy( user_network->name, name );
@@ -1036,7 +1063,8 @@ int add_user_network(
 *  Arguments:	model  				- pointer to the model
 *  				type   				- type of network
 *  				skip_hospitalised 	- don't include people if hospitalised
-*  				skip_quarantined    - don't include people if quarantined
+*  				skip_self_quarantined    - don't include people if self-quarantined
+*  				skip_centralized_quarantined    - don't include people if centralized-quarantined
 *  				n_indiv				- total number of people to include
 *  				pdxs				- the person idxs of each person on network (array length n_indiv)
 *  				interactions		- the number of daily interactions for each person (array length n_indiv)
@@ -1046,7 +1074,8 @@ int add_user_network(
 int add_user_network_random(
 	model *model,
 	int skip_hospitalised,
-	int skip_quarantined,
+	int skip_self_quarantined,
+	int skip_centralized_quarantined,
 	long n_indiv,
 	long *pdxs,
 	int *interactions,
@@ -1092,7 +1121,8 @@ int add_user_network_random(
 	// set on the meta data of the new network
 	user_network = create_network( model->params->n_total, RANDOM );
 	user_network->skip_hospitalised = skip_hospitalised;
-	user_network->skip_quarantined  = skip_quarantined;
+	user_network->skip_self_quarantined  = skip_self_quarantined;
+	user_network->skip_centralized_quarantined  = skip_centralized_quarantined;
 	user_network->construction      = NETWORK_CONSTRUCTION_RANDOM;
 	user_network->daily_fraction    = 1;
 	user_network->network_id		= network_id;
@@ -1368,13 +1398,14 @@ int one_time_step( model *model )
 	transition_events( model, VACCINE_PROTECT, &intervention_vaccine_protect, TRUE );
 	transition_events( model, VACCINE_WANE,    &intervention_vaccine_wane, TRUE );
 
-	transition_events( model, QUARANTINE_RELEASE,     &intervention_quarantine_release, FALSE );
+	transition_events( model, QUARANTINE_RELEASE,     &intervention_quarantine_release, FALSE );   //TODO: check
 	transition_events( model, TRACE_TOKEN_RELEASE,    &intervention_trace_token_release,FALSE );
 
-	if( model->params->quarantine_smart_release_day > 0 )
-		intervention_smart_release( model );
+	if( model->params->quarantine_smart_release_day > 0 )  //TODO: check
+		intervention_smart_release( model );   //TODO: check
 
-	model->n_quarantine_days += model->event_lists[QUARANTINED].n_current;
+	model->n_self_quarantine_days += model->event_lists[SELF_QUARANTINED].n_current;
+	model->n_centralized_quarantine_days += model->event_lists[CENTRALIZED_QUARANTINED].n_current;
 
 	ring_inc( model->interaction_day_idx, model->params->days_of_interactions );
 	return_interactions( model );

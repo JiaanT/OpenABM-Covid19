@@ -411,7 +411,7 @@ int number_of_traceable_interactions(model *model, individual *indiv)
 *  Description: Quarantine an individual until a certain time
 *  				If they are already in quarantine then extend quarantine until that time
 *  Returns:		TRUE/FALSE - TRUE when quarantining for the first time on a trace
-*  							 FALSE when not quarantining
+*  							 FALSE when not quarantining  //TODO返回值要修改
 ******************************************************************************************/
 int intervention_quarantine_until(
 	model *model,
@@ -421,7 +421,7 @@ int intervention_quarantine_until(
 	int maxof,
 	trace_token *index_token,
 	int contact_time,
-	double risk_score
+	double risk_score // TODO: add a param - int event_type
 )
 {
 	if( is_in_hospital( indiv ) )
@@ -462,7 +462,7 @@ int intervention_quarantine_until(
 	if( indiv->quarantine_event == NULL )
 	{
 		indiv->quarantine_event = add_individual_to_event_list( model, QUARANTINED, indiv, model->time );
-		set_quarantine_status( indiv, model->params, model->time, TRUE, model );
+		set_quarantine_status( indiv, model->params, model->time, TRUE, model );  //TODO 改成 status
 	}
 
 	if( indiv->quarantine_release_event != NULL )
@@ -491,7 +491,7 @@ void intervention_quarantine_release( model *model, individual *indiv )
 	if( indiv->quarantine_event != NULL )
 	{
 		remove_event_from_event_list( model, indiv->quarantine_event );
-		set_quarantine_status( indiv, model->params, model->time, FALSE, model);
+		set_quarantine_status( indiv, model->params, model->time, FALSE, model);  //TODO
 	};
 }
 
@@ -916,7 +916,7 @@ void intervention_quarantine_household(
 	int time,
 	int contact_trace,
 	trace_token *index_token,
-	int contact_time
+	int contact_time //TODO add a param - int event_type
 )
 {
 	parameters *params = model->params;
@@ -937,7 +937,8 @@ void intervention_quarantine_household(
 			if( contact->status == DEATH || is_in_hospital( contact ) || contact->infection_events->is_case )
 				continue;
 
-			quarantine = intervention_quarantine_until( model, contact, indiv, time_event, TRUE, index_token, contact_time, risk_scores[ contact->age_group ] );
+			// TODO: quarantine函数的返回值要修改
+			quarantine = intervention_quarantine_until( model, contact, indiv, time_event, TRUE, index_token, contact_time, risk_scores[ contact->age_group ] );//TODO
 
 			if( quarantine && params->test_on_traced && ( index_token->index_status == POSITIVE_TEST ) )
 			{
@@ -1327,7 +1328,7 @@ void intervention_smart_release( model *model )
 *  Returns:		void
 ******************************************************************************************/
 
-int resolve_quarantine_reasons(int *quarantine_reasons)
+int resolve_quarantine_reasons(int *quarantine_reasons)  //TODO: check
 {
 	int n_reasons = 0, reason, i;
 	

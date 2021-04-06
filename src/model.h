@@ -91,7 +91,7 @@ struct model{
 	long n_self_quarantine_release_events;
 	long n_self_quarantine_release_events_app_user;
 
-	long n_centralized_quarantine_days;
+	long n_centralized_quarantine_days; //TODO 看一下这个变量是干什么的，判断一下是否需要区分self、centralized
 
 	long n_centralized_quarantine_app_user;
 	long n_centralized_quarantine_infected;

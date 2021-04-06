@@ -434,7 +434,7 @@ void transition_to_hospitalised( model *model, individual *indiv )
 			transition_one_disese_event( model, indiv, HOSPITALISED, RECOVERED, HOSPITALISED_RECOVERED );
 	}
 
-	if( indiv->quarantined )
+	if( indiv->quarantined != NOT_QUARANTINED)
 		intervention_quarantine_release( model, indiv );
 
 	intervention_on_hospitalised( model, indiv );

@@ -35,7 +35,8 @@ struct network{
 	long n_vertices;  			// number of vertices
 	int type;		  			// the type of network (.e. household/random/occupational)
 	int skip_hospitalised;		// include the network for hospitalised people
-	int skip_quarantined;		// include the network for quarantined people
+	int skip_self_quarantined;		// HealthCode: include the network for self-quarantined people
+	int skip_centralized_quarantined;		// HealthCode: include the network for centralized-quarantined people
 	double daily_fraction;  	// fraction of the daily network sampled
 	int network_id;				// unique network ID
 	char name[INPUT_CHAR_LEN]; 	// unique name of the network
