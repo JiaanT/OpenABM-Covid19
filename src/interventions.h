@@ -45,7 +45,6 @@ void intervention_trace_token_release( model*, individual* );
 
 int intervention_quarantine_until( model*, individual*, individual*, int, int, trace_token*, int, double, int );
 void intervention_quarantine_release( model*, individual* );
-void intervention_quarantine_household( model*, individual*, int, int, trace_token*, int );
 void intervention_quarantine_household( model*, individual*, int, int, trace_token*, int, int );
 void intervention_test_take( model*, individual* );
 void intervention_test_result( model*, individual* );

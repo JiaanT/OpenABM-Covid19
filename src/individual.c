@@ -29,7 +29,7 @@ void initialize_individual(
 
 	indiv->idx         = idx;
 	indiv->status      = SUSCEPTIBLE;
-	indiv->quarantined = NOT_QUARANTINED;
+	indiv->quarantined = NOT_QUARANTINED;  //HealthCode
 	indiv->app_user	   = FALSE;
 
 	for( day = 0; day < params->days_of_interactions; day++ )

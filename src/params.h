@@ -128,7 +128,7 @@ typedef struct{
 	double self_quarantine_compliance_traced_positive; // HealthCode: probability that someone complies with a red quarantine message(self-quarantine)
 	double centralized_quarantine_compliance_traced_positive; // HealthCode: probability that someone complies with a red quarantine message(centralized-quarantine)
 
-	int quarantine_on_traced;				// immediately quarantine those who are contact traced
+	int quarantine_on_traced;				// immediately quarantine those who are contact traced //HealthCode(0-no, 1-self-quarantine, 2-centralized-quarantine)
 	int quarantine_smart_release_day;		// number of days until smart release on no contacts
 
 	double traceable_interaction_fraction;  // the proportion of interactions which are traceable even if both users have app
