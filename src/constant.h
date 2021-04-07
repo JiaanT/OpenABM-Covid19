@@ -67,8 +67,8 @@ enum TRANSITIONS_TYPES{
 	//HealthCode: 原来只有一个（TRACED_QUARANTINE_POSITIVE）
 	TRACED_SELF_QUARANTINE_POSITIVE,  // HealthCode: individuals (who are traced after a contact tested positive) to be self-quarantined
 	TRACED_CENTRALIZED_QUARANTINE_POSITIVE,  // HealthCode: individuals (who are traced after a contact tested positive) to be centralized-quarantined
-	TEST_RESULT_QUARANTINE_SELF,  // HealthCode: individuals to be self-quarantined after tested positive
-	TEST_RESULT_QUARANTINE_CENTRALIZED,  // HealthCode: individuals to be centralized-quarantined after tested positive
+	TEST_RESULT_SELF_QUARANTINE,  // HealthCode: individuals to be self-quarantined after tested positive
+	TEST_RESULT_CENTRALIZED_QUARANTINE,  // HealthCode: individuals to be centralized-quarantined after tested positive
 	RECOVERED_SUSCEPTIBLE,
 	VACCINE_PROTECTED_SUSCEPTIBLE,
 	VACCINE_PROTECTED_SYMPTOMS_VACCINE_WANED,

@@ -29,10 +29,13 @@ void set_up_transition_times_intervention( model *model )
 	parameters *params = model->params;
 	int **transitions  = model->transition_time_distributions;
 
-	geometric_max_draw_list( transitions[SYMPTOMATIC_QUARANTINE], 	  N_DRAW_LIST, params->quarantine_dropout_self,            params->quarantine_length_self );
-	geometric_max_draw_list( transitions[TRACED_QUARANTINE_SYMPTOMS], N_DRAW_LIST, params->quarantine_dropout_traced_symptoms, params->quarantine_length_traced_symptoms );
-	geometric_max_draw_list( transitions[TRACED_QUARANTINE_POSITIVE], N_DRAW_LIST, params->quarantine_dropout_traced_positive, params->quarantine_length_traced_positive );
-	geometric_max_draw_list( transitions[TEST_RESULT_QUARANTINE],     N_DRAW_LIST, params->quarantine_dropout_positive,        params->quarantine_length_positive );
+	// HealthCode
+	geometric_max_draw_list( transitions[SYMPTOMATIC_SELF_QUARANTINE], 	  N_DRAW_LIST, params->self_quarantine_dropout,            params->self_quarantine_length );
+	geometric_max_draw_list( transitions[TRACED_SELF_QUARANTINE_SYMPTOMS], N_DRAW_LIST, params->self_quarantine_dropout_traced_symptoms, params->self_quarantine_length_traced_symptoms );
+	geometric_max_draw_list( transitions[TRACED_SELF_QUARANTINE_POSITIVE], N_DRAW_LIST, params->self_quarantine_dropout_traced_positive, params->self_quarantine_length_traced_positive );
+	geometric_max_draw_list( transitions[TRACED_CENTRALIZED_QUARANTINE_POSITIVE], N_DRAW_LIST, params->centralized_quarantine_dropout_traced_positive, params->centralized_quarantine_length_traced_positive );
+	geometric_max_draw_list( transitions[TEST_RESULT_SELF_QUARANTINE],     N_DRAW_LIST, params->self_quarantine_dropout_positive,        params->self_quarantine_length_positive );
+	geometric_max_draw_list( transitions[TEST_RESULT_CENTRALIZED_QUARANTINE],     N_DRAW_LIST, params->centralized_quarantine_dropout_positive,        params->centralized_quarantine_length_positive );
 }
 
 /*****************************************************************************************
