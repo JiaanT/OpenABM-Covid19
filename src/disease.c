@@ -346,9 +346,8 @@ void transition_one_disese_event(
 			}
 		}
 	}
-	
 	// HEALTHCODE
-	if( indiv->quarantined == UNDER_CENTRALIZED_QUARANTINE ){
+	else if( indiv->quarantined == UNDER_CENTRALIZED_QUARANTINE ){
 		if(from == SUSCEPTIBLE){
 			model->n_centralized_quarantine_infected++;
 			if(indiv->app_user == TRUE){
@@ -434,7 +433,7 @@ void transition_to_hospitalised( model *model, individual *indiv )
 			transition_one_disese_event( model, indiv, HOSPITALISED, RECOVERED, HOSPITALISED_RECOVERED );
 	}
 
-	if( indiv->quarantined != NOT_QUARANTINED)
+	if( indiv->quarantined != NOT_QUARANTINED ) //HealthCode
 		intervention_quarantine_release( model, indiv );
 
 	intervention_on_hospitalised( model, indiv );

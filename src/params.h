@@ -92,6 +92,7 @@ typedef struct{
 
 	int quarantine_days;					// number of days of previous contacts to quarantine
 	double self_quarantine_fraction;		// fraction of people who self-quarantine when show symptoms
+	int quarantine_type_on_positive;		// HealthCode: quarantine type for a person who tested positive(0: self, 1: centralized)
 
 	int manual_trace_on;   // manual contract trace
 	int manual_trace_time_on;   				// time at which manual contact tracing begins
@@ -110,7 +111,7 @@ typedef struct{
 
 	int self_quarantine_length;				// max length of quarantine if self-quarantine on symptoms  //HealthCode: renamed(原名quarantine_length_self)
 	int self_quarantine_length_traced_symptoms;	// HealthCode: max length of self-quarantine if contact-traced from a index case with only symptoms
-	int self_quarantine_length_traced_positive;	// HealthCode: max length of centralized-quarantine if contact-traced from a index case with a positive test
+	int self_quarantine_length_traced_positive;	// HealthCode: max length of self-quarantine if contact-traced from a index case with a positive test
 	int centralized_quarantine_length_traced_positive;	// HealthCode: max length of centralized-quarantine if contact-traced from a index case with a positive test
 	int self_quarantine_length_positive;			// HealthCode: max length of self-quarantine if receive positive test result
 	int centralized_quarantine_length_positive;			// HealthCode: max length of centralized-quarantine if receive positive test result
@@ -125,6 +126,7 @@ typedef struct{
 	double self_quarantine_compliance_traced_symptoms; // HealthCode(renamed: quarantine_compliance_traced_symptoms): probability that someone complies with a amber quarantine message
 	
 	// TODO 这里这个服从概率肯定直接决定了有多少人会隔离，但是无法区分集中、居家隔离，因为算法中肯定直接取了个百分比没有做区分
+	// TODO 目前的做法是要求这两个有一个必须是0，这样经过概率函数得出的概率也是0
 	double self_quarantine_compliance_traced_positive; // HealthCode: probability that someone complies with a red quarantine message(self-quarantine)
 	double centralized_quarantine_compliance_traced_positive; // HealthCode: probability that someone complies with a red quarantine message(centralized-quarantine)
 
@@ -146,7 +148,7 @@ typedef struct{
 	int self_quarantine_household_contacts_on_symptoms; // HealthCode: self-quarantine the contacts of other household members when someone gets symptoms
 
 	int test_on_symptoms;					// carry out a test on those with symptoms
-	int test_on_traced;						// carry out a test on those with positive test results
+	int test_on_traced;						// carry out a test on those with positive test results  //TODO: 区分self、centralized quarantine
 	int test_result_wait;					// number of days to wait for a test result
 	int test_order_wait;					// minimum number of days to wait for a test to be taken
 	int test_result_wait_priority;			// number of days to wait for a priority test result

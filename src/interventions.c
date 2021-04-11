@@ -417,6 +417,7 @@ int number_of_traceable_interactions(model *model, individual *indiv)
 *  							 FALSE when not quarantining  
 	//TODO 这个函数好像仅限于用作app_trace的隔离，看一下，不行就再写一个用于我定义的情况的隔离
 ******************************************************************************************/
+// FIXME: 这个函数要改，如果之前以及self-quarantine了，现在要centralized-quarantine怎么办
 int intervention_quarantine_until(
 	model *model,
 	individual *indiv,
@@ -930,8 +931,7 @@ void intervention_quarantine_household(
 	int time,
 	int contact_trace,
 	trace_token *index_token,
-	int contact_time,
-	int event_type //HealthCode
+	int contact_time
 )
 {
 	parameters *params = model->params;
@@ -939,23 +939,26 @@ void intervention_quarantine_household(
 	int idx, n, time_event, quarantine, time_test;
 	long* members;
 	double *risk_scores = model->params->risk_score_household[ indiv->age_group ];
+	int event_type; //HealthCode
 	int transition_type; //HealthCode
 
 	// HealthCode: Only 3 combinations: 
-	// HealthCode: (1)symptoms_only & self-quarantine
-	// HealthCode: (1)positive_test & self-quarantine
-	// HealthCode: (1)positive_test & centralized-quarantine
+	// HealthCode: (1)symptoms_only & self_quarantine_household_on_symptoms
+	// HealthCode: (1)positive_test & self_quarantine_household_on_positive
+	// HealthCode: (1)positive_test & centralized_quarantine_household_on_positive
 	if( index_token->index_status == SYMPTOMS_ONLY )
-		if( event_type == SELF_QUARANTINED )
+		if( model->params->self_quarantine_household_on_symptoms)
 			transition_type = TRACED_SELF_QUARANTINE_SYMPTOMS;
+			event_type = SELF_QUARANTINED;
 	if( index_token->index_status == POSITIVE_TEST )
-		{
-			if( event_type == SELF_QUARANTINED )
-				transition_type = TRACED_SELF_QUARANTINE_POSITIVE;
-			if( event_type == CENTRALIZED_QUARANTINED )
-				transition_type = TRACED_CENTRALIZED_QUARANTINE_POSITIVE;
-		}
-	
+	{
+		if( model->params->self_quarantine_household_on_positive)
+			transition_type = TRACED_SELF_QUARANTINE_POSITIVE;
+			event_type = SELF_QUARANTINED;
+		if( model->params->centralized_quarantine_household_on_positive)
+			transition_type = TRACED_CENTRALIZED_QUARANTINE_POSITIVE;
+			event_type = CENTRALIZED_QUARANTINED;
+	}
 
 	n          = model->household_directory->n_jdx[indiv->house_no];
 	members    = model->household_directory->val[indiv->house_no];
@@ -972,7 +975,7 @@ void intervention_quarantine_household(
 
 			// TODO: 判断一下quarantine函数的返回值要不要修改，初步判断是不用，因为下面的逻辑是只要被隔离（居家或集中），且test_on_traced等等就去test，哪种隔离在这里其实无所谓
 			quarantine = intervention_quarantine_until( model, contact, indiv, time_event, TRUE, index_token, contact_time, risk_scores[ contact->age_group ], event_type );
-
+			// TODO: 上面这个函数要改，如果之前以及self-quarantine了，现在要centralized-quarantine怎么办
 			if( quarantine && params->test_on_traced && ( index_token->index_status == POSITIVE_TEST ) )
 			{
 				time_test = max( model->time + params->test_order_wait, contact_time + params->test_insensitive_period );
@@ -991,8 +994,7 @@ void intervention_quarantine_household(
 ******************************************************************************************/
 void intervention_quarantine_household_of_traced(
 	model *model,
-	trace_token *index_token,
-	int event_type //HealthCode
+	trace_token *index_token
 )
 {
 	individual *contact;
@@ -1010,7 +1012,7 @@ void intervention_quarantine_household_of_traced(
 		if( ( contact->house_no != house_no ) & ( contact->quarantine_release_event != NULL ) )
 		{
 			time_quarantine = contact->quarantine_release_event->time;
-			intervention_quarantine_household( model, contact, time_quarantine, FALSE, index_token, FALSE, event_type); //HealthCode
+			intervention_quarantine_household( model, contact, time_quarantine, FALSE, index_token, FALSE);
 		}
 	}
 }
@@ -1034,10 +1036,10 @@ void intervention_index_case_symptoms_to_positive(
 	parameters *params = model->params;
 	individual *contact;
 	int time_quarantine, time_test;
-	int trace_household = params->quarantine_household_on_traced_positive && !params->quarantine_household_on_traced_symptoms;
+	int trace_household = params->centralized_quarantine_household_on_traced_positive || (params->self_quarantine_household_on_traced_positive && !params->self_quarantine_household_on_traced_symptoms);
 	trace_token *token  = index_token;
 	long house_no       = index_token->individual->house_no;
-	int contact_time;
+	int contact_time;	
 
 	while( token->next_index != NULL )
 	{
@@ -1050,19 +1052,26 @@ void intervention_index_case_symptoms_to_positive(
  			if( contact->status != DEATH && !is_in_hospital( contact ) && !contact->infection_events->is_case )
  			{
 				contact_time = token->contact_time;
-				if( gsl_ran_bernoulli( rng, params->quarantine_compliance_traced_positive  ) )
+				// HealthCode: self-quarantine
+				if( params->quarantine_on_traced == 1 && gsl_ran_bernoulli( rng, params->self_quarantine_compliance_traced_positive ) ) //HealthCode: 添加了 params->quarantine_on_traced == 1
 				{
-					time_quarantine = contact_time + sample_transition_time( model, TRACED_QUARANTINE_POSITIVE );
-					intervention_quarantine_until( model, contact, index_token->individual, time_quarantine, TRUE, NULL, contact_time, 1 );
+					time_quarantine = contact_time + sample_transition_time( model, TRACED_SELF_QUARANTINE_POSITIVE ); //HealthCode
+					intervention_quarantine_until( model, contact, index_token->individual, time_quarantine, TRUE, NULL, contact_time, 1, SELF_QUARANTINED); //HealthCode
+				}
+				// HealthCode: centralized-quarantine
+				if( params->quarantine_on_traced == 2 && gsl_ran_bernoulli( rng, params->centralized_quarantine_compliance_traced_positive ) )  //HealthCode: 添加了 params->quarantine_on_traced == 2
+				{
+					time_quarantine = contact_time + sample_transition_time( model, TRACED_CENTRALIZED_QUARANTINE_POSITIVE );
+					intervention_quarantine_until( model, contact, index_token->individual, time_quarantine, TRUE, NULL, contact_time, 1, CENTRALIZED_QUARANTINED); //HealthCode
 				}
 
-				if( ( contact->quarantine_release_event != NULL ) & ( params->test_on_traced == TRUE ) )
+				if( ( contact->quarantine_release_event != NULL ) & ( params->test_on_traced == TRUE ) )  //TODO: 区分self、centralized quarantine
 				{
 					time_test = max( model->time + params->test_order_wait, contact_time + params->test_insensitive_period );
 					intervention_test_order( model, contact, time_test );
 				}
 
-				if( trace_household & ( contact->house_no != house_no ) & ( contact->quarantine_release_event != NULL ) )
+				if( trace_household & ( contact->house_no != house_no ) & ( contact->quarantine_release_event != NULL ) ) //HealthCode
 				{
 					time_quarantine = contact->quarantine_release_event->time;
 
@@ -1106,16 +1115,16 @@ void intervention_on_symptoms( model *model, individual *indiv )
 		trace_token *index_token  = index_trace_token( model, indiv );
 		index_token->index_status = SYMPTOMS_ONLY;
 
-		time_event = model->time + sample_transition_time( model, SYMPTOMATIC_QUARANTINE );
+		time_event = model->time + sample_transition_time( model, SYMPTOMATIC_SELF_QUARANTINE );
 
-		intervention_quarantine_until( model, indiv, NULL, time_event, TRUE, NULL, model->time, 1 );
+		intervention_quarantine_until( model, indiv, NULL, time_event, TRUE, NULL, model->time, 1, SELF_QUARANTINED ); //HealthCode
 		indiv->traced_on_this_trace = TRUE;
 
-		if( params->quarantine_household_on_symptoms )
-			intervention_quarantine_household( model, indiv, time_event, params->quarantine_household_contacts_on_symptoms, index_token, model->time );
+		if( params->self_quarantine_household_on_symptoms )
+			intervention_quarantine_household( model, indiv, time_event, params->self_quarantine_household_contacts_on_symptoms, index_token, model->time ); //HealthCode
 
 		if( params->test_on_symptoms )
-			intervention_test_order( model, indiv, model->time + params->test_order_wait );
+			intervention_test_order( model, indiv, model->time + params->test_order_wait ); //TODO: check this function
 
 		if( params->trace_on_symptoms && ( params->quarantine_on_traced || params->test_on_traced ) )
 			intervention_notify_contacts( model, indiv, 1, index_token, DIGITAL_TRACE );
@@ -1123,7 +1132,7 @@ void intervention_on_symptoms( model *model, individual *indiv )
 		remove_traced_on_this_trace( model, indiv );
 		if( indiv->index_token_release_event != NULL )
 			remove_event_from_event_list( model, indiv->index_token_release_event );
-		indiv->index_token_release_event = add_individual_to_event_list( model, TRACE_TOKEN_RELEASE, indiv, model->time + params->quarantine_length_traced_symptoms );
+		indiv->index_token_release_event = add_individual_to_event_list( model, TRACE_TOKEN_RELEASE, indiv, model->time + params->self_quarantine_length_traced_symptoms ); //HealthCode
 	}
 }
 
@@ -1176,22 +1185,37 @@ void intervention_on_positive_result( model *model, individual *indiv )
 	int index_already  = ( indiv->index_trace_token != NULL );
 	trace_token *index_token = index_trace_token( model, indiv );
 	index_token->index_status = POSITIVE_TEST;
-	int release_time = index_token->contact_time + params->quarantine_length_traced_positive;
+
+	int release_time;
+	if( params->quarantine_type_on_positive == 0 ) //HealthCode
+		release_time = index_token->contact_time + params->self_quarantine_length_traced_positive;
+	else if( params->quarantine_type_on_positive == 1 ) //HealthCode
+		release_time = index_token->contact_time + params->centralized_quarantine_length_traced_positive;
 
 	if( !is_in_hospital( indiv ) )
 	{
-		time_event = index_token->contact_time + sample_transition_time( model, TEST_RESULT_QUARANTINE );
-		intervention_quarantine_until( model, indiv, NULL, time_event, TRUE, NULL, model->time, 1 );
+		if( params->quarantine_type_on_positive == 0 ) //HealthCode
+		{
+			time_event = index_token->contact_time + sample_transition_time( model, TEST_RESULT_SELF_QUARANTINE );
+			intervention_quarantine_until( model, indiv, NULL, time_event, TRUE, NULL, model->time, 1, SELF_QUARANTINED);
+		}
+		else if( params->quarantine_type_on_positive == 1 ) //HealthCode
+		{
+			time_event = index_token->contact_time + sample_transition_time( model, TEST_RESULT_CENTRALIZED_QUARANTINE );
+			intervention_quarantine_until( model, indiv, NULL, time_event, TRUE, NULL, model->time, 1, CENTRALIZED_QUARANTINED );
+		}
 	}
 	indiv->traced_on_this_trace = TRUE;
 
-	if( params->quarantine_household_on_positive )
-		intervention_quarantine_household( model, indiv, time_event, params->quarantine_household_contacts_on_positive, index_token, model->time );
+	if( params->self_quarantine_household_on_positive ) //HealthCode
+		intervention_quarantine_household( model, indiv, time_event, params->self_quarantine_household_contacts_on_positive, index_token, model->time );
+	else if( params->centralized_quarantine_household_on_positive ) //HealthCode
+		intervention_quarantine_household( model, indiv, time_event, params->centralized_quarantine_household_contacts_on_positive, index_token, model->time );
 
 	if( params->trace_on_positive &&
-	 ( !index_already || !params->trace_on_symptoms || params->retrace_on_positive ) &&
+	 ( !index_already || !params->trace_on_symptoms || params->retrace_on_positive ) && 
 	  ( params->quarantine_on_traced || params->test_on_traced )
-	)
+	)  //TODO: trace_on_symptoms、retrace_on_positive以及所有和trace有关的params都需要检查一下，看看是不是要改成self、centralized
 		intervention_notify_contacts( model, indiv, 1, index_token, DIGITAL_TRACE );
 
 	if( params->manual_trace_on &&
@@ -1261,20 +1285,32 @@ void intervention_on_traced(
 	{
 		int time_event = model->time;
 		int quarantine;
+		int event_type;
 
 		if( index_token->index_status == SYMPTOMS_ONLY )
 		{
-			if( gsl_ran_bernoulli( rng, params->quarantine_compliance_traced_symptoms ) )
-				time_event = contact_time + sample_transition_time( model, TRACED_QUARANTINE_SYMPTOMS );
+			if( gsl_ran_bernoulli( rng, params->self_quarantine_compliance_traced_symptoms ) ) //HealthCode
+			{
+				time_event = contact_time + sample_transition_time( model, TRACED_SELF_QUARANTINE_SYMPTOMS ); //HealthCode
+				event_type = SELF_QUARANTINED;
+			}
 
 		}
 		else if( index_token->index_status == POSITIVE_TEST )
 		{
-			if( gsl_ran_bernoulli( rng, params->quarantine_compliance_traced_positive ) )
-				time_event = contact_time + sample_transition_time( model, TRACED_QUARANTINE_POSITIVE );
+			if( gsl_ran_bernoulli( rng, params->self_quarantine_compliance_traced_positive ) ) //HealthCode
+			{
+				time_event = contact_time + sample_transition_time( model, TRACED_SELF_QUARANTINE_POSITIVE );
+				event_type = SELF_QUARANTINED;
+			}
+			else if( gsl_ran_bernoulli( rng, params->centralized_quarantine_compliance_traced_positive ) ) //HealthCode
+			{
+				time_event = contact_time + sample_transition_time( model, TRACED_CENTRALIZED_QUARANTINE_POSITIVE );
+				event_type = CENTRALIZED_QUARANTINED;
+			}
 		}
 
-		quarantine = intervention_quarantine_until( model, indiv, index_token->individual, time_event, TRUE, index_token, contact_time, risk_score );
+		quarantine = intervention_quarantine_until( model, indiv, index_token->individual, time_event, TRUE, index_token, contact_time, risk_score, event_type );
 
 		if( quarantine && params->test_on_traced && ( index_token->index_status == POSITIVE_TEST ) )
 		{
@@ -1284,8 +1320,9 @@ void intervention_on_traced(
 
 		if( quarantine && recursion_level != NOT_RECURSIVE )
 		{
-			if( ( params->quarantine_household_on_traced_positive && index_token->index_status == POSITIVE_TEST	) ||
-				( params->quarantine_household_on_traced_symptoms && index_token->index_status == SYMPTOMS_ONLY ) )
+			//HealthCode
+			if( ( params->self_quarantine_household_on_traced_positive || params->centralized_quarantine_household_on_traced_positive && index_token->index_status == POSITIVE_TEST	) ||
+				( params->self_quarantine_household_on_traced_symptoms && index_token->index_status == SYMPTOMS_ONLY ) )
 				intervention_quarantine_household( model, indiv, time_event, FALSE, index_token, contact_time );
 		}
 	}
@@ -1310,7 +1347,7 @@ void intervention_smart_release( model *model )
 
 	int days =  model->params->quarantine_smart_release_day;
 
-	day        = model->time + model->params->quarantine_length_traced_symptoms - days;
+	day        = model->time + model->params->self_quarantine_length_traced_symptoms - days; //HealthCode
 	time_index = model->time - days;
 
 	if( time_index < 1)
