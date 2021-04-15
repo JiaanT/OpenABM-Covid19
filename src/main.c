@@ -72,7 +72,7 @@ int main(int argc, char *argv[])
                 write_hospital_interactions( model);
             }
 
-			printf( "%i,%i,%i,%i,%i,%i,%li,%li,%li,%li,%li,%li,%li,%li,%li,%li,%li,%li,%li,%li,%li,%li,%li,%li,%li,%li,%li,%li,%li,%li,%li,%li\n",
+			printf( "%i,%i,%i,%i,%i,%i,%li,%li,%li,%li,%li,%li,%li,%li,%li,%li,%li,%li,%li,%li,%li,%li,%li,%li,%li,%li,%li,%li,%li,%li,%li,%li,%li,%li,%li,%li,%li,%li,%li,%li,%li,%li\n",
 					model->time,
 					params.lockdown_on,
 					params.lockdown_elderly_on,
@@ -83,7 +83,8 @@ int main(int argc, char *argv[])
 					n_total( model, CASE ),
 					n_current( model, PRESYMPTOMATIC ) + n_current( model, PRESYMPTOMATIC_MILD ),
 					n_current( model, ASYMPTOMATIC ),
-					n_current( model, QUARANTINED ),
+					n_current( model, SELF_QUARANTINED ),
+					n_current( model, CENTRALIZED_QUARANTINED ),
 					n_total_by_day( model, TEST_RESULT, model->time ),
 					n_current( model, SYMPTOMATIC ) + n_current( model, SYMPTOMATIC_MILD ),
 					n_current( model, HOSPITALISED ),
@@ -96,20 +97,29 @@ int main(int argc, char *argv[])
 					n_total( model, ICU),
 					n_total( model, DISCHARGED),
 					n_total( model, MORTUARY),
-					model->n_quarantine_infected,
-					model->n_quarantine_recovered,
-					model->n_quarantine_app_user,
-					model->n_quarantine_app_user_infected,
-					model->n_quarantine_app_user_recovered,
-					model->n_quarantine_events,
-					model->n_quarantine_events_app_user,
-					model->n_quarantine_release_events,
-					model->n_quarantine_release_events_app_user
+					model->n_self_quarantine_infected,
+					model->n_self_quarantine_recovered,
+					model->n_self_quarantine_app_user,
+					model->n_self_quarantine_app_user_infected,
+					model->n_self_quarantine_app_user_recovered,
+					model->n_self_quarantine_events,
+					model->n_self_quarantine_events_app_user,
+					model->n_self_quarantine_release_events,
+					model->n_self_quarantine_release_events_app_user,
+					model->n_centralized_quarantine_infected,
+					model->n_centralized_quarantine_recovered,
+					model->n_centralized_quarantine_app_user,
+					model->n_centralized_quarantine_app_user_infected,
+					model->n_centralized_quarantine_app_user_recovered,
+					model->n_centralized_quarantine_events,
+					model->n_centralized_quarantine_events_app_user,
+					model->n_centralized_quarantine_release_events,
+					model->n_centralized_quarantine_release_events_app_user
 			);
 		}
 		else
 		{
-			printf( "%i,%i,%i,%i,%i,%i,%li,%li,%li,%li,%li,%li,%li,%li,%li,%li,%li,%li,%li,%li,%li,%li,%li,%li,%li,%li,%li\n",
+			printf( "%i,%i,%i,%i,%i,%i,%li,%li,%li,%li,%li,%li,%li,%li,%li,%li,%li,%li,%li,%li,%li,%li,%li,%li,%li,%li,%li,%li,%li,%li,%li,%li,%li,%li,%li,%li,%li\n",
 					model->time,
 					params.lockdown_on,
 					params.lockdown_elderly_on,
@@ -120,7 +130,8 @@ int main(int argc, char *argv[])
 					n_total( model, CASE ),
 					n_current( model, PRESYMPTOMATIC ) + n_current( model, PRESYMPTOMATIC_MILD ),
 					n_current( model, ASYMPTOMATIC ),
-					n_current( model, QUARANTINED ),
+					n_current( model, SELF_QUARANTINED ),
+					n_current( model, CENTRALIZED_QUARANTINED ),
 					n_total_by_day( model, TEST_RESULT, model->time ),
 					n_current( model, SYMPTOMATIC ) + n_current( model, SYMPTOMATIC_MILD ),
 					n_current( model, HOSPITALISED ),
@@ -128,15 +139,24 @@ int main(int argc, char *argv[])
 					n_current( model, HOSPITALISED_RECOVERING ),
 					n_current( model, DEATH ),
 					n_current( model, RECOVERED ),
-					model->n_quarantine_infected,
-					model->n_quarantine_recovered,
-					model->n_quarantine_app_user,
-					model->n_quarantine_app_user_infected,
-					model->n_quarantine_app_user_recovered,
-					model->n_quarantine_events,
-					model->n_quarantine_events_app_user,
-					model->n_quarantine_release_events,
-					model->n_quarantine_release_events_app_user
+					model->n_self_quarantine_infected,
+					model->n_self_quarantine_recovered,
+					model->n_self_quarantine_app_user,
+					model->n_self_quarantine_app_user_infected,
+					model->n_self_quarantine_app_user_recovered,
+					model->n_self_quarantine_events,
+					model->n_self_quarantine_events_app_user,
+					model->n_self_quarantine_release_events,
+					model->n_self_quarantine_release_events_app_user,
+					model->n_centralized_quarantine_infected,
+					model->n_centralized_quarantine_recovered,
+					model->n_centralized_quarantine_app_user,
+					model->n_centralized_quarantine_app_user_infected,
+					model->n_centralized_quarantine_app_user_recovered,
+					model->n_centralized_quarantine_events,
+					model->n_centralized_quarantine_events_app_user,
+					model->n_centralized_quarantine_release_events,
+					model->n_centralized_quarantine_release_events_app_user
 			);
 		}
 	};
@@ -152,7 +172,8 @@ int main(int argc, char *argv[])
 	printf( "# Total deaths:                  %li\n", n_total( model, DEATH ) );
 	for( idx = 0; idx < N_AGE_GROUPS; idx++ )
 		printf( "# Total deaths %11s:      %li\n", AGE_TEXT_MAP[idx], n_total_age( model, DEATH, idx ) );
-	printf( "# Total quarantined days:        %li\n", model->n_quarantine_days );
+	printf( "# Total self-quarantined days:        %li\n", model->n_self_quarantine_days );
+	printf( "# Total centralized-quarantined days:        %li\n", model->n_centralized_quarantine_days );
 
 	write_output_files( model, &params );
 	
