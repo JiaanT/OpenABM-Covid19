@@ -92,8 +92,7 @@ typedef struct{
 
 	int quarantine_days;					// number of days of previous contacts to quarantine
 	double self_quarantine_fraction;		// fraction of people who self-quarantine when show symptoms
-	int quarantine_type_on_positive;		// HealthCode: quarantine type for a person who tested positive(0: self, 1: centralized)
-
+	
 	int manual_trace_on;   // manual contract trace
 	int manual_trace_time_on;   				// time at which manual contact tracing begins
 	int manual_trace_on_hospitalization;   // manual contract trace on hospitalization
@@ -113,6 +112,8 @@ typedef struct{
 	int self_quarantine_length_traced_symptoms;	// HealthCode: max length of self-quarantine if contact-traced from a index case with only symptoms
 	int self_quarantine_length_traced_positive;	// HealthCode: max length of self-quarantine if contact-traced from a index case with a positive test
 	int centralized_quarantine_length_traced_positive;	// HealthCode: max length of centralized-quarantine if contact-traced from a index case with a positive test
+	
+	int quarantine_type_on_positive;		// HealthCode: quarantine type for a person who tested positive(0: self, 1: centralized)
 	int self_quarantine_length_positive;			// HealthCode: max length of self-quarantine if receive positive test result
 	int centralized_quarantine_length_positive;			// HealthCode: max length of centralized-quarantine if receive positive test result
 	double self_quarantine_dropout;			// HealthCode: daily dropout rate if self-quarantined
@@ -124,7 +125,6 @@ typedef struct{
 	double centralized_quarantine_dropout_positive;     	// HealthCode: daily dropout rate(centralized-quarantine) if receive positive test result
 
 	double self_quarantine_compliance_traced_symptoms; // HealthCode(renamed: quarantine_compliance_traced_symptoms): probability that someone complies with a amber quarantine message
-	
 	// TODO 这里这个服从概率肯定直接决定了有多少人会隔离，但是无法区分集中、居家隔离，因为算法中肯定直接取了个百分比没有做区分
 	// TODO 目前的做法是要求这两个有一个必须是0，这样经过概率函数得出的概率也是0
 	double self_quarantine_compliance_traced_positive; // HealthCode: probability that someone complies with a red quarantine message(self-quarantine)

@@ -302,35 +302,56 @@ void read_param_file( parameters *params)
 		if( check < 1){ print_exit("Failed to read parameter location_death_icu\n"); };
 	}
 
-	check = fscanf(parameter_file, " %i ,", &(params->quarantine_length_self));
-	if( check < 1){ print_exit("Failed to read parameter quarantine_length_self\n"); };
+	check = fscanf(parameter_file, " %i ,", &(params->self_quarantine_length));
+	if( check < 1){ print_exit("Failed to read parameter self_quarantine_length\n"); };
 
-	check = fscanf(parameter_file, " %i ,", &(params->quarantine_length_traced_symptoms));
+	check = fscanf(parameter_file, " %i ,", &(params->self_quarantine_length_traced_symptoms));
 	if( check < 1){ print_exit("Failed to read parameter quarantine_length_traced_symptoms\n"); };
 
-	check = fscanf(parameter_file, " %i ,", &(params->quarantine_length_traced_positive));
-	if( check < 1){ print_exit("Failed to read parameter quarantine_length_traced_positive\n"); };
+	check = fscanf(parameter_file, " %i ,", &(params->self_quarantine_length_traced_positive));
+	if( check < 1){ print_exit("Failed to read parameter self_quarantine_length_traced_positive\n"); };
 
-	check = fscanf(parameter_file, " %i ,", &(params->quarantine_length_positive));
-	if( check < 1){ print_exit("Failed to read parameter quarantine_length_positive\n"); };
+	check = fscanf(parameter_file, " %i ,", &(params->centralized_quarantine_length_traced_positive));
+	if( check < 1){ print_exit("Failed to read parameter centralized_quarantine_length_traced_positive\n"); };
 
-	check = fscanf(parameter_file, " %lf ,", &(params->quarantine_dropout_self));
-	if( check < 1){ print_exit("Failed to read parameter quarantine_dropout_self\n"); };
+	check = fscanf(parameter_file, " %i ,", &(params->quarantine_type_on_positive));
+	if( check < 1){ print_exit("Failed to read parameter quarantine_type_on_positive\n"); };
 
-	check = fscanf(parameter_file, " %lf ,", &(params->quarantine_dropout_traced_symptoms));
-	if( check < 1){ print_exit("Failed to read parameter quarantine_dropout_traced\n"); };
+	check = fscanf(parameter_file, " %i ,", &(params->self_quarantine_length_positive));
+	if( check < 1){ print_exit("Failed to read parameter self_quarantine_length_positive\n"); };
 
-	check = fscanf(parameter_file, " %lf ,", &(params->quarantine_dropout_traced_positive));
-	if( check < 1){ print_exit("Failed to read parameter quarantine_dropout_traced\n"); };
+	check = fscanf(parameter_file, " %i ,", &(params->centralized_quarantine_length_positive));
+	if( check < 1){ print_exit("Failed to read parameter centralized_quarantine_length_positive\n"); };
 
-	check = fscanf(parameter_file, " %lf ,", &(params->quarantine_dropout_positive));
-	if( check < 1){ print_exit("Failed to read parameter quarantine_dropout_positive\n"); };
+	check = fscanf(parameter_file, " %lf ,", &(params->self_quarantine_dropout));
+	if( check < 1){ print_exit("Failed to read parameter self_quarantine_dropout\n"); };
 
-	check = fscanf(parameter_file, " %lf ,", &(params->quarantine_compliance_traced_symptoms));
-	if( check < 1){ print_exit("Failed to read parameter quarantine_compliance_traced_symptoms\n"); };
+	check = fscanf(parameter_file, " %lf ,", &(params->centralized_quarantine_dropout));
+	if( check < 1){ print_exit("Failed to read parameter centralized_quarantine_dropout\n"); };
 
-	check = fscanf(parameter_file, " %lf ,", &(params->quarantine_compliance_traced_positive));
-	if( check < 1){ print_exit("Failed to read parameter quarantine_compliance_traced_positive\n"); };
+	check = fscanf(parameter_file, " %lf ,", &(params->self_quarantine_dropout_traced_symptoms));
+	if( check < 1){ print_exit("Failed to read parameter self_quarantine_dropout_traced_symptoms\n"); };
+
+	check = fscanf(parameter_file, " %lf ,", &(params->self_quarantine_dropout_traced_positive));
+	if( check < 1){ print_exit("Failed to read parameter self_quarantine_dropout_traced_positive\n"); };
+
+	check = fscanf(parameter_file, " %lf ,", &(params->centralized_quarantine_dropout_traced_positive));
+	if( check < 1){ print_exit("Failed to read parameter centralized_quarantine_dropout_traced_positive\n"); };
+
+	check = fscanf(parameter_file, " %lf ,", &(params->self_quarantine_dropout_positive));
+	if( check < 1){ print_exit("Failed to read parameter self_quarantine_dropout_positive\n"); };
+
+	check = fscanf(parameter_file, " %lf ,", &(params->centralized_quarantine_dropout_positive));
+	if( check < 1){ print_exit("Failed to read parameter centralized_quarantine_dropout_positive\n"); };
+
+	check = fscanf(parameter_file, " %lf ,", &(params->self_quarantine_compliance_traced_symptoms));
+	if( check < 1){ print_exit("Failed to read parameter self_quarantine_compliance_traced_symptoms\n"); };
+
+	check = fscanf(parameter_file, " %lf ,", &(params->self_quarantine_compliance_traced_positive));
+	if( check < 1){ print_exit("Failed to read parameter self_quarantine_compliance_traced_positive\n"); };
+
+	check = fscanf(parameter_file, " %lf ,", &(params->centralized_quarantine_compliance_traced_positive));
+	if( check < 1){ print_exit("Failed to read parameter centralized_quarantine_compliance_traced_positive\n"); };
 
 	check = fscanf(parameter_file, " %i ,", &(params->test_on_symptoms));
 	if( check < 1){ print_exit("Failed to read parameter test_on_symptoms\n"); };
@@ -362,26 +383,38 @@ void read_param_file( parameters *params)
 	check = fscanf(parameter_file, " %i ,", &(params->allow_clinical_diagnosis));
 	if( check < 1){ print_exit("Failed to read parameter allow_clinical_diagnosis\n"); };
 
-	check = fscanf(parameter_file, " %i ,", &(params->quarantine_household_on_positive));
-	if( check < 1){ print_exit("Failed to read parameter quarantine_household_on_positive\n"); };
+	check = fscanf(parameter_file, " %i ,", &(params->self_quarantine_household_on_positive));
+	if( check < 1){ print_exit("Failed to read parameter self_quarantine_household_on_positive\n"); };
 
-	check = fscanf(parameter_file, " %i ,", &(params->quarantine_household_on_symptoms));
-	if( check < 1){ print_exit("Failed to read parameter quarantine_household_on_symptoms\n"); };
+	check = fscanf(parameter_file, " %i ,", &(params->centralized_quarantine_household_on_positive));
+	if( check < 1){ print_exit("Failed to read parameter centralized_quarantine_household_on_positive\n"); };
 
-	check = fscanf(parameter_file, " %i ,", &(params->quarantine_household_on_traced_positive));
-	if( check < 1){ print_exit("Failed to read parameter quarantine_household_on_traced_positive\n"); };
+	check = fscanf(parameter_file, " %i ,", &(params->self_quarantine_household_on_symptoms));
+	if( check < 1){ print_exit("Failed to read parameter self_quarantine_household_on_symptoms\n"); };
 
-	check = fscanf(parameter_file, " %i ,", &(params->quarantine_household_on_traced_symptoms));
-	if( check < 1){ print_exit("Failed to read parameter quarantine_household_on_traced_symptoms\n"); };
+	check = fscanf(parameter_file, " %i ,", &(params->self_quarantine_household_on_traced_positive));
+	if( check < 1){ print_exit("Failed to read parameter self_quarantine_household_on_traced_positive\n"); };
 
-	check = fscanf(parameter_file, " %i ,", &(params->quarantine_household_contacts_on_positive));
-	if( check < 1){ print_exit("Failed to read parameter quarantine_household_contacts_on_positive\n"); };
+	check = fscanf(parameter_file, " %i ,", &(params->centralized_quarantine_household_on_traced_positive));
+	if( check < 1){ print_exit("Failed to read parameter centralized_quarantine_household_on_traced_positive\n"); };
 
-	check = fscanf(parameter_file, " %i ,", &(params->quarantine_household_contacts_on_symptoms));
-	if( check < 1){ print_exit("Failed to read parameter quarantine_household_contacts_on_symptoms\n"); };
+	check = fscanf(parameter_file, " %i ,", &(params->self_quarantine_household_on_traced_symptoms));
+	if( check < 1){ print_exit("Failed to read parameter self_quarantine_household_on_traced_symptoms\n"); };
 
-	check = fscanf(parameter_file, " %i  ,", &(params->quarantined_daily_interactions));
-	if( check < 1){ print_exit("Failed to read parameter quarantined_daily_interactions\n"); };
+	check = fscanf(parameter_file, " %i ,", &(params->self_quarantine_household_contacts_on_positive));
+	if( check < 1){ print_exit("Failed to read parameter self_quarantine_household_contacts_on_positive\n"); };
+
+	check = fscanf(parameter_file, " %i ,", &(params->centralized_quarantine_household_contacts_on_positive));
+	if( check < 1){ print_exit("Failed to read parameter centralized_quarantine_household_contacts_on_positive\n"); };
+
+	check = fscanf(parameter_file, " %i ,", &(params->self_quarantine_household_contacts_on_symptoms));
+	if( check < 1){ print_exit("Failed to read parameter self_quarantine_household_contacts_on_symptoms\n"); };
+
+	check = fscanf(parameter_file, " %i  ,", &(params->self_quarantined_daily_interactions));
+	if( check < 1){ print_exit("Failed to read parameter self_quarantined_daily_interactions\n"); };
+
+	check = fscanf(parameter_file, " %i  ,", &(params->centralized_quarantined_daily_interactions));
+	if( check < 1){ print_exit("Failed to read parameter centralized_quarantined_daily_interactions\n"); };
 
 	check = fscanf(parameter_file, " %i  ,", &(params->quarantine_days));
 	if( check < 1){ print_exit("Failed to read parameter quarantine_days\n"); };
@@ -775,7 +808,7 @@ void write_individual_file(model *model, parameters *params)
 		infection_count = count_infection_events( indiv );
 
 		fprintf(individual_output_file,
-			"%li,%d,%d,%d,%d,%d,%li,%d,%d,%d,%d,%d,%d,%0.4f,%d\n",
+			"%li,%d,%d,%d,%d,%d,%li,%d,%d,%d,%d,%d,%d,%d,%0.4f,%d\n",
 			indiv->idx,
 			indiv->status,
 			indiv->age_group,
@@ -784,7 +817,8 @@ void write_individual_file(model *model, parameters *params)
 			worker_ward_type,
 			indiv->house_no,
 			indiv->quarantined,
-			indiv->infection_events->times[QUARANTINED],
+			indiv->infection_events->times[SELF_QUARANTINED],
+			indiv->infection_events->times[CENTRALIZED_QUARANTINED],
 			indiv->quarantine_test_result,
 			indiv->app_user,
 			indiv->random_interactions,
@@ -849,7 +883,7 @@ void print_interactions_averages(model *model, int header)
 		int_by_age[ indiv->age_type] += n_int;
 		per_by_age[ indiv->age_type]++;
 
-		cqh = ifelse( indiv->status == HOSPITALISED , 2, ifelse( indiv->quarantined && indiv->infection_events->times[QUARANTINED] != model->time, 1, 0 ) );
+		cqh = ifelse( indiv->status == HOSPITALISED , 2, ifelse( indiv->quarantined == 1 && indiv->infection_events->times[SELF_QUARANTINED] != model->time, 1, ifelse( indiv->quarantined == 2 && indiv->infection_events->times[CENTRALIZED_QUARANTINED] != model->time, 1, 0 ) ) ); //HealthCode
 		int_by_cqh[cqh] += n_int;
 		per_by_cqh[cqh]++;
 	}
@@ -1181,7 +1215,7 @@ void write_trace_tokens( model *model )
 	output_file = fopen(output_file_name, "w");
 	fprintf( output_file ,"time,index_time,index_ID,index_reason,index_status,contact_time,traced_from_ID,traced_ID,traced_status,traced_infector_ID,traced_time_infected\n" );
 
-	int max_quarantine_length = max( model->params->quarantine_length_traced_symptoms, model->params->quarantine_length_traced_positive );
+	int max_quarantine_length = max( max( model->params->self_quarantine_length_traced_symptoms, model->params->self_quarantine_length_traced_positive ), model->params->centralized_quarantine_length_traced_positive );
 	for( day = 1; day <= max_quarantine_length; day++ )
 	{
 		n_events    = model->event_lists[TRACE_TOKEN_RELEASE].n_daily_current[ model->time + day ];
@@ -1255,7 +1289,7 @@ void write_trace_tokens_ts( model *model, int initialise )
 	else
 		output_file = fopen(output_file_name, "a");
 
-	int max_quarantine_length = max( model->params->quarantine_length_traced_symptoms, model->params->quarantine_length_traced_positive );
+	int max_quarantine_length = max( max( model->params->self_quarantine_length_traced_symptoms, model->params->self_quarantine_length_traced_positive ), model->params->centralized_quarantine_length_traced_positive );
 	for( day = 1; day <=  max_quarantine_length; day++ )
 	{
 		n_events    = model->event_lists[TRACE_TOKEN_RELEASE].n_daily_current[ model->time + day ];

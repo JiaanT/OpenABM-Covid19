@@ -121,7 +121,7 @@ void set_quarantine_status(
 	int time,
 	int status,
 	model *model
-)
+)  //TODO: Quarantine time/duration
 {
 	// PROGRESS
 	switch( status )
@@ -315,23 +315,10 @@ void update_random_interactions( individual *indiv, parameters* params )
 			case HOSPITALISED_RECOVERING: n = params->hospitalised_daily_interactions; break;
 			default: 			n = ifelse( lockdown, n * params->lockdown_random_network_multiplier, n );
 		}
-
-		if( indiv->health_code_user )
-		{
-			// TODO
-			switch( indiv->health_code_state )
-			{
-				// case GREEN:			n = 0; 										 break;
-				// case YELLOW:		n = params->hospitalised_daily_interactions; break;
-				// case RED:			n = params->hospitalised_daily_interactions; break;
-				// case ORANGE: 		n = params->hospitalised_daily_interactions; break;
-				// default: 			n = ifelse( lockdown, n * params->lockdown_random_network_multiplier, n );
-			}
-		}
 	}
-	else if( !indiv->quarantined == UNDER_SELF_QUARANTINE)  // HealthCode
+	else if( indiv->quarantined == UNDER_SELF_QUARANTINE )  // HealthCode
 		n = params->self_quarantined_daily_interactions;
-	else   // HealthCode
+	else if( indiv->quarantined == UNDER_CENTRALIZED_QUARANTINE )   // HealthCode
 		n = params->centralized_quarantined_daily_interactions;
 
 	indiv->random_interactions = round_random( n );
@@ -584,13 +571,13 @@ void set_health_code_status( individual *indiv, parameters* params, int time, in
 	indiv->health_code_state = status;
 	update_random_interactions( indiv, params ); //TODO: 修改这个函数的逻辑，加入health code判断
 
-	switch( status )
+	switch( status )  //FIXME: 这个逻辑是否要放在intervention里面？
 	{
-		case GREEN:			set_quarantine_status(indiv, params, time, FALSE, model) ;break;
-		case YELLOW:		/* TODO 居家隔离 */; break;
+		case GREEN:			set_quarantine_status(indiv, params, time, NOT_QUARANTINED, model) ;break;
+		case YELLOW:		set_quarantine_status(indiv, params, time, UNDER_SELF_QUARANTINE, model) ;break;
+		case ORANGE: 		set_quarantine_status(indiv, params, time, UNDER_SELF_QUARANTINE, model) ;break;
 		// TODO: Modify this logic to: the person to be quarantined after a while of health code state changed
-		case RED:			set_quarantine_status(indiv, params, time, TRUE, model) ;break;
-		case ORANGE: 		/* TODO */; break;
+		case RED:			set_quarantine_status(indiv, params, time, UNDER_CENTRALIZED_QUARANTINE, model) ;break;
 		// case BLUE: 			n = params->hospitalised_daily_interactions; break; //TODO
 	}
 }

@@ -297,7 +297,7 @@ void set_up_counters( model *model ){
 *  Description: reset counters of events
 *  Returns:		void
 ******************************************************************************************/
-void reset_counters( model *model ){
+void reset_counters( model *model ){ //TODO: Add new counters for self/centralized quarantine of health code users.
 
 	model->n_self_quarantine_events = 0;
 	model->n_self_quarantine_events_app_user = 0;
@@ -703,7 +703,7 @@ void build_random_network( model *model, network *network, long n_pos, long* int
 	n_pos--;
 	while( idx < n_pos )
 	{
-		if( interactions[ idx ] == interactions[ idx + 1 ] )
+		if( interactions[ idx ] == interactions[ idx + 1 ] )  //这两个interactions属于同一个person
 		{
 			skip = 1;
 			while( ( idx + skip ) < n_pos )
@@ -723,7 +723,7 @@ void build_random_network( model *model, network *network, long n_pos, long* int
 				idx++;
 				continue;
 			}
-		}
+		} // 这一段是把所有不相同（不属于同一个person的）interactions排到interactions的最前面
 		network->edges[network->n_edges].id1 = interactions[ idx++ ];
 		network->edges[network->n_edges].id2 = interactions[ idx++ ];
 		network->n_edges++;
@@ -777,7 +777,7 @@ void build_random_network_default( model *model )
 	int jdx;
 	long *interactions = model->possible_interactions;
 
-	n_pos            = 0;
+	n_pos            = 0;  // All interactions of all persons.
 	for( person = 0; person < model->params->n_total; person++ )
 		for( jdx = 0; jdx < model->population[person].random_interactions; jdx++ )
 			interactions[n_pos++]=person;
@@ -817,9 +817,9 @@ void add_interactions_from_network(
 		if( skip_hospitalised && ( is_in_hospital( indiv1 ) || is_in_hospital( indiv2 ) ) )
 			continue;
 		if( skip_self_quarantined && ( indiv1->quarantined == UNDER_SELF_QUARANTINE || indiv2->quarantined == UNDER_SELF_QUARANTINE ) )
-			continue;
+			continue; //HealthCode
 		if( skip_centralized_quarantined && ( indiv1->quarantined == UNDER_CENTRALIZED_QUARANTINE || indiv2->quarantined == UNDER_CENTRALIZED_QUARANTINE ) )
-			continue;
+			continue; //HealthCode
 		if( prob_drop > 0 && gsl_ran_bernoulli( rng, prob_drop ) )
 			continue;
 
@@ -1398,7 +1398,7 @@ int one_time_step( model *model )
 	transition_events( model, VACCINE_PROTECT, &intervention_vaccine_protect, TRUE );
 	transition_events( model, VACCINE_WANE,    &intervention_vaccine_wane, TRUE );
 
-	transition_events( model, QUARANTINE_RELEASE,     &intervention_quarantine_release, FALSE );   //TODO: check
+	transition_events( model, QUARANTINE_RELEASE,     &intervention_quarantine_release, FALSE );
 	transition_events( model, TRACE_TOKEN_RELEASE,    &intervention_trace_token_release,FALSE );
 
 	if( model->params->quarantine_smart_release_day > 0 )  //TODO: check

@@ -82,6 +82,50 @@ void set_up_app_users( model *model )
 }
 
 /*****************************************************************************************
+*  Name:		set_up_health_code_users
+*  Description: Set up the proportion of health code users in the population (default is FALSE)
+******************************************************************************************/
+void set_up_health_code_users( model *model )
+{
+	long idx, jdx, age, current_users, not_users, max_user;
+	double *health_code_users_fraction = model->params->app_users_fraction;  // Making health code user fraction the same as app user
+	double *fraction = health_code_users_fraction; //HealthCode
+
+	for( age = 0; age < N_AGE_GROUPS; age++ )
+	{
+		current_users = 0;
+		not_users     = 0;
+		for( idx = 0; idx < model->params->n_total; idx++ )
+			if( model->population[ idx ].age_group == age )
+			{
+				current_users += model->population[ idx ].health_code_user;
+				not_users     += 1 - model->population[ idx ].health_code_user;
+			}
+
+		if( ( current_users + not_users) == 0 )
+			continue;
+
+		max_user = ceil( ( current_users + not_users ) * fraction[age] ) - current_users;
+		if( max_user < 0 || max_user > not_users )
+			print_exit( "Bad target health_code_users_fraction" );
+
+		int *users = calloc( not_users, sizeof( int ) );
+
+		for( idx = 0; idx < max_user; idx++ )
+			users[ idx ] = 1;
+
+		gsl_ran_shuffle( rng, users, not_users, sizeof( int ) );
+
+		jdx   = 0;
+		for( idx = 0; idx < model->params->n_total; idx++ )
+			if( model->population[ idx ].age_group == age && model->population[ idx ].health_code_user == FALSE ); //HealthCode
+				model->population[ idx ].health_code_user = users[ jdx++ ]; //HealthCode
+
+		free( users );
+	}
+}
+
+/*****************************************************************************************
 *  Name:		set_up_risk_scores
 *  Description: Set up the risk scores used in calculation whether people are quarantined
 ******************************************************************************************/
@@ -1084,7 +1128,7 @@ void intervention_index_case_symptoms_to_positive(
 }
 
 
-// TODO: Modify the intervention on symptems:
+// TODO: Modify the intervention on symptems: to modify the health code status
 // TODO: 
 /*****************************************************************************************
 *  Name:		intervention_on_symptoms
@@ -1097,7 +1141,7 @@ void intervention_index_case_symptoms_to_positive(
 *  				 3. Option to quarantine all household members upon symptoms
 *  Returns:		void
 ******************************************************************************************/
-void intervention_on_symptoms( model *model, individual *indiv )
+void intervention_on_symptoms( model *model, individual *indiv ) //PROGRESS
 {
 	if( !model->params->interventions_on )
 		return;
@@ -1418,3 +1462,8 @@ int resolve_quarantine_reasons(int *quarantine_reasons)  //TODO: check
 	return UNKNOWN;
 }
 
+void intervention_on_health_code_changed( model*, individual* )
+{
+	if( !model->params->interventions_on )
+		return;
+}

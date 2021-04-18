@@ -69,8 +69,8 @@ struct individual{
 	short vaccine_status_next;
 	event *vaccine_wane_event;
 
-	int health_code_user;
-	int health_code_state;
+	int health_code_user; //HealthCode
+	int health_code_state; //HealthCode
 };
 
 struct interaction{
@@ -135,6 +135,8 @@ void set_icu_admission( individual*, parameters*, int );
 void set_mortuary_admission( individual*, parameters*, int );
 void set_discharged( individual*, parameters*, int );
 void set_vaccine_status( individual*, short, short );
+void set_health_code_user( individual*, parameters*, int ); //HealthCode
+void set_health_code_status( individual*, parameters*, int, int, model* );  //HealthCode
 void transition_vaccine_status( individual* );
 void update_random_interactions( individual*, parameters* );
 int count_infection_events( individual * );

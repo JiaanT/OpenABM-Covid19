@@ -31,6 +31,7 @@ struct trace_token{
 
 void set_up_transition_times_intervention( model* );
 void set_up_app_users( model* );
+void set_up_health_code_users( model* ); //HealthCode
 void set_up_risk_scores( model* );
 void destroy_risk_scores( model* );
 void update_intervention_policy( model*, int );
@@ -45,7 +46,7 @@ void intervention_trace_token_release( model*, individual* );
 
 int intervention_quarantine_until( model*, individual*, individual*, int, int, trace_token*, int, double, int );
 void intervention_quarantine_release( model*, individual* );
-void intervention_quarantine_household( model*, individual*, int, int, trace_token*, int, int );
+void intervention_quarantine_household( model*, individual*, int, int, trace_token*, int );
 void intervention_test_take( model*, individual* );
 void intervention_test_result( model*, individual* );
 void intervention_manual_trace( model *, individual *);
@@ -66,5 +67,8 @@ void intervention_on_traced( model*, individual*, int, int, trace_token*, double
 
 void intervention_smart_release( model* );
 int resolve_quarantine_reasons(int *);
+
+// TODO: intervention_on_health_code_changed
+void intervention_on_health_code_changed( model*, individual* ) //HealthCode
 
 #endif /* INTERVENTIONS_H_ */
