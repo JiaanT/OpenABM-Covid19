@@ -1462,7 +1462,7 @@ int resolve_quarantine_reasons(int *quarantine_reasons)  //TODO: check
 	return UNKNOWN;
 }
 
-void intervention_on_health_code_changed( model*, individual* )
+void intervention_on_health_code_changed( model* model, individual* individual )
 {
 	if( !model->params->interventions_on )
 		return;
