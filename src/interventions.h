@@ -49,7 +49,7 @@ void intervention_quarantine_release( model*, individual* );
 void intervention_quarantine_household( model*, individual*, int, int, trace_token*, int );
 void intervention_test_take( model*, individual* );
 void intervention_test_result( model*, individual* );
-void intervention_manual_trace( model *, individual *);
+void intervention_manual_trace( model *, individual *);  //TODO: 看下这个函数是不是我理解的意思，如果是的话加入健康码颜色修改
 void intervention_notify_contacts( model*, individual*, int, trace_token*, int );
 void intervention_index_case_symptoms_to_positive( model*, trace_token* );
 
@@ -65,7 +65,7 @@ void intervention_on_critical( model*, individual* );
 void intervention_on_positive_result( model*, individual* );
 void intervention_on_traced( model*, individual*, int, int, trace_token*, double, int );
 
-void intervention_smart_release( model* );
+void intervention_smart_release( model* );//PROGRESS
 int resolve_quarantine_reasons(int *);
 
 // TODO: intervention_on_health_code_changed

@@ -1141,7 +1141,7 @@ void intervention_index_case_symptoms_to_positive(
 *  				 3. Option to quarantine all household members upon symptoms
 *  Returns:		void
 ******************************************************************************************/
-void intervention_on_symptoms( model *model, individual *indiv ) //PROGRESS
+void intervention_on_symptoms( model *model, individual *indiv )
 {
 	if( !model->params->interventions_on )
 		return;
@@ -1151,6 +1151,15 @@ void intervention_on_symptoms( model *model, individual *indiv ) //PROGRESS
 
 	int quarantine, time_event;
 	parameters *params = model->params;
+
+
+	if( model->params->health_code_system_on )
+	{
+		int health_code_chenged = ifelse(indiv->health_code_state == YELLOW, FALSE, TRUE);
+		indiv->health_code_state = YELLOW; //HealthCode
+		if( health_code_chenged )
+			intervention_on_health_code_changed(model, indiv); //HealthCode
+	}
 
 	quarantine = indiv->quarantined || gsl_ran_bernoulli( rng, params->self_quarantine_fraction );
 
@@ -1194,6 +1203,14 @@ void intervention_on_hospitalised( model *model, individual *indiv )
 	if( !model->params->interventions_on )
 		return;
 
+	if( model->params->health_code_system_on )
+	{
+		int health_code_chenged = ifelse(indiv->health_code_state == RED, FALSE, TRUE);
+		indiv->health_code_state = RED; //HealthCode
+		if( health_code_chenged )
+			intervention_on_health_code_changed(model, indiv); //HealthCode
+	}
+
 	if( indiv->quarantine_test_result == NO_TEST && !indiv->infection_events->is_case )
 	{
 		intervention_test_order( model, indiv, model->time );
@@ -1224,6 +1241,15 @@ void intervention_on_positive_result( model *model, individual *indiv )
 	if( !model->params->interventions_on )
 		return;
 
+
+	if( model->params->health_code_system_on )
+	{
+		int health_code_chenged = ifelse(indiv->health_code_state == RED, FALSE, TRUE);
+		indiv->health_code_state = RED; //HealthCode
+		if( health_code_chenged )
+			intervention_on_health_code_changed(model, indiv); //HealthCode
+	}
+
 	int time_event = UNKNOWN;
 	parameters *params = model->params;
 	int index_already  = ( indiv->index_trace_token != NULL );
@@ -1231,19 +1257,19 @@ void intervention_on_positive_result( model *model, individual *indiv )
 	index_token->index_status = POSITIVE_TEST;
 
 	int release_time;
-	if( params->quarantine_type_on_positive == 0 ) //HealthCode
+	if( !params->centralized_quarantine_on_positive ) //HealthCode
 		release_time = index_token->contact_time + params->self_quarantine_length_traced_positive;
-	else if( params->quarantine_type_on_positive == 1 ) //HealthCode
+	else //HealthCode
 		release_time = index_token->contact_time + params->centralized_quarantine_length_traced_positive;
 
 	if( !is_in_hospital( indiv ) )
 	{
-		if( params->quarantine_type_on_positive == 0 ) //HealthCode
+		if( !params->centralized_quarantine_on_positive ) //HealthCode
 		{
 			time_event = index_token->contact_time + sample_transition_time( model, TEST_RESULT_SELF_QUARANTINE );
 			intervention_quarantine_until( model, indiv, NULL, time_event, TRUE, NULL, model->time, 1, SELF_QUARANTINED);
 		}
-		else if( params->quarantine_type_on_positive == 1 ) //HealthCode
+		else //HealthCode
 		{
 			time_event = index_token->contact_time + sample_transition_time( model, TEST_RESULT_CENTRALIZED_QUARANTINE );
 			intervention_quarantine_until( model, indiv, NULL, time_event, TRUE, NULL, model->time, 1, CENTRALIZED_QUARANTINED );
@@ -1294,7 +1320,7 @@ void intervention_on_critical( model *model, individual *indiv )
 }
 
 /*****************************************************************************************
-*  Name:		intervention_on_traced
+*  Name:		intervention_on_traced //包括与symptomatic/positive的人接触
 *  Description: Optional interventions performed upon becoming contact-traced
 *
 *   			1. Quarantine the individual
@@ -1342,16 +1368,36 @@ void intervention_on_traced(
 		}
 		else if( index_token->index_status == POSITIVE_TEST )
 		{
-			if( gsl_ran_bernoulli( rng, params->self_quarantine_compliance_traced_positive ) ) //HealthCode
+			
+			if( model->params->health_code_system_on )
 			{
-				time_event = contact_time + sample_transition_time( model, TRACED_SELF_QUARANTINE_POSITIVE );
-				event_type = SELF_QUARANTINED;
+				int health_code_chenged = ifelse(indiv->health_code_state == RED, FALSE, TRUE);
+				indiv->health_code_state = RED; //HealthCode
+				if( health_code_chenged )
+					intervention_on_health_code_changed(model, indiv); //HealthCode
 			}
-			else if( gsl_ran_bernoulli( rng, params->centralized_quarantine_compliance_traced_positive ) ) //HealthCode
+
+			int transition_type; //HealthCode
+			if( params->centralized_quarantine_traced_positive ) //HealthCode
 			{
-				time_event = contact_time + sample_transition_time( model, TRACED_CENTRALIZED_QUARANTINE_POSITIVE );
 				event_type = CENTRALIZED_QUARANTINED;
+				transition_type = TRACED_CENTRALIZED_QUARANTINE_POSITIVE;
+				if( gsl_ran_bernoulli( rng, params->centralized_quarantine_compliance_traced_positive ) ) //HealthCode
+				{
+					time_event = contact_time + sample_transition_time( model, transition_type );
+				}
 			}
+			else
+			{
+				event_type = SELF_QUARANTINED;
+				transition_type = TRACED_SELF_QUARANTINE_POSITIVE;
+				if( gsl_ran_bernoulli( rng, params->self_quarantine_compliance_traced_positive ) ) //HealthCode
+				{
+					time_event = contact_time + sample_transition_time( model, transition_type );
+					
+				}
+			}
+			
 		}
 
 		quarantine = intervention_quarantine_until( model, indiv, index_token->individual, time_event, TRUE, index_token, contact_time, risk_score, event_type );
@@ -1462,8 +1508,44 @@ int resolve_quarantine_reasons(int *quarantine_reasons)  //TODO: check
 	return UNKNOWN;
 }
 
-void intervention_on_health_code_changed( model* model, individual* individual )
+
+//HealthCode
+// TODO: 加入hotspot通行限制
+void intervention_on_health_code_changed( model* model, individual* indiv, int transition_type ) //PROGRESS
 {
 	if( !model->params->interventions_on )
 		return;
+	
+	int self_quarantine, centralized_quarantine, time_event;
+	parameters *params = model->params;
+
+	switch( indiv->health_code_state )
+	{
+		case GREEN:
+			intervention_quarantine_release( model, indiv );
+			break;
+		case YELLOW:
+			self_quarantine = indiv->quarantined || gsl_ran_bernoulli( rng, params->self_quarantine_fraction );
+			if( self_quarantine )
+			{
+				time_event = model->time + sample_transition_time( model, transition_type );
+				intervention_quarantine_until( model, indiv, NULL, time_event, TRUE, NULL, model->time, 1, SELF_QUARANTINED );
+			}
+			break;
+		case ORANGE:
+			self_quarantine = indiv->quarantined || gsl_ran_bernoulli( rng, params->self_quarantine_fraction );
+			if( self_quarantine )
+			{
+				time_event = model->time + sample_transition_time( model, transition_type );
+				intervention_quarantine_until( model, indiv, NULL, time_event, TRUE, NULL, model->time, 1, SELF_QUARANTINED );
+			}
+			break;
+		case RED:
+			time_event = model->time + sample_transition_time( model, transition_type );
+			intervention_quarantine_until( model, indiv, NULL, time_event, TRUE, NULL, model->time, 1, CENTRALIZED_QUARANTINED );
+			break;
+		case BLUE:
+			//TODO: 可以进入特殊场所
+			break;
+	}
 }

@@ -25,6 +25,7 @@ typedef struct individual individual;
 struct individual{
 	long idx;
 	long house_no;
+	long community_no; //HealthCode
 	int age_group;
 	int age_type;
 	int occupation_network;

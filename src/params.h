@@ -110,10 +110,12 @@ typedef struct{
 
 	int self_quarantine_length;				// max length of quarantine if self-quarantine on symptoms  //HealthCode: renamed(原名quarantine_length_self)
 	int self_quarantine_length_traced_symptoms;	// HealthCode: max length of self-quarantine if contact-traced from a index case with only symptoms
+	
+	int centralized_quarantine_traced_positive;		// HealthCode: quarantine type for a person who contacted a someone tests positve(0: self, 1: centralized)
 	int self_quarantine_length_traced_positive;	// HealthCode: max length of self-quarantine if contact-traced from a index case with a positive test
 	int centralized_quarantine_length_traced_positive;	// HealthCode: max length of centralized-quarantine if contact-traced from a index case with a positive test
 	
-	int quarantine_type_on_positive;		// HealthCode: quarantine type for a person who tested positive(0: self, 1: centralized)
+	int centralized_quarantine_on_positive;		// HealthCode: quarantine type for a person who tested positive(0: self, 1: centralized)
 	int self_quarantine_length_positive;			// HealthCode: max length of self-quarantine if receive positive test result
 	int centralized_quarantine_length_positive;			// HealthCode: max length of centralized-quarantine if receive positive test result
 	double self_quarantine_dropout;			// HealthCode: daily dropout rate if self-quarantined
@@ -130,7 +132,7 @@ typedef struct{
 	double self_quarantine_compliance_traced_positive; // HealthCode: probability that someone complies with a red quarantine message(self-quarantine)
 	double centralized_quarantine_compliance_traced_positive; // HealthCode: probability that someone complies with a red quarantine message(centralized-quarantine)
 
-	int quarantine_on_traced;				// immediately quarantine those who are contact traced //HealthCode(0-no, 1-self-quarantine, 2-centralized-quarantine)
+	int quarantine_on_traced;				// immediately quarantine those who are contact traced
 	int quarantine_smart_release_day;		// number of days until smart release on no contacts
 
 	double traceable_interaction_fraction;  // the proportion of interactions which are traceable even if both users have app
@@ -183,6 +185,7 @@ typedef struct{
 
 	int interventions_on;           // should we use interventions
 	int intervention_start_time;	// time at which interventions start
+	int health_code_system_on;      //HealthCode: should we use the HealthCode system
 
 	int sys_write_individual; 		// Should an individual file be written to output?
 	int sys_write_hospital; 		// Should a hospital file be written to output?
