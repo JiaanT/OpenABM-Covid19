@@ -305,6 +305,12 @@ void transition_to_discharged( model *model, individual *indiv )
 {
 	set_discharged( indiv, model->params, 1);
 	release_patient_from_hospital( indiv, &(model->hospitals[indiv->hospital_idx]) );
+
+	int health_code_chenged = ifelse(indiv->health_code_state == GREEN, FALSE, TRUE);
+	set_health_code_status( indiv, model->params, model->time, GREEN ); //HealthCode
+	if( health_code_chenged )
+		intervention_on_health_code_changed(model, indiv); //HealthCode
+
 	transition_one_hospital_event( model, indiv, DISCHARGED, NO_EVENT, NO_EDGE );
 }
 

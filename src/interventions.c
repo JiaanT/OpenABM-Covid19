@@ -1156,7 +1156,7 @@ void intervention_on_symptoms( model *model, individual *indiv )
 	if( model->params->health_code_system_on )
 	{
 		int health_code_chenged = ifelse(indiv->health_code_state == YELLOW, FALSE, TRUE);
-		indiv->health_code_state = YELLOW; //HealthCode
+		set_health_code_status( indiv, model->params, model->time, YELLOW ); //HealthCode
 		if( health_code_chenged )
 			intervention_on_health_code_changed(model, indiv); //HealthCode
 	}
@@ -1206,7 +1206,7 @@ void intervention_on_hospitalised( model *model, individual *indiv )
 	if( model->params->health_code_system_on )
 	{
 		int health_code_chenged = ifelse(indiv->health_code_state == RED, FALSE, TRUE);
-		indiv->health_code_state = RED; //HealthCode
+		set_health_code_status( indiv, model->params, model->time, RED ); //HealthCode
 		if( health_code_chenged )
 			intervention_on_health_code_changed(model, indiv); //HealthCode
 	}
@@ -1245,7 +1245,7 @@ void intervention_on_positive_result( model *model, individual *indiv )
 	if( model->params->health_code_system_on )
 	{
 		int health_code_chenged = ifelse(indiv->health_code_state == RED, FALSE, TRUE);
-		indiv->health_code_state = RED; //HealthCode
+		set_health_code_status( indiv, model->params, model->time, RED ); //HealthCode
 		if( health_code_chenged )
 			intervention_on_health_code_changed(model, indiv); //HealthCode
 	}
@@ -1372,7 +1372,7 @@ void intervention_on_traced(
 			if( model->params->health_code_system_on )
 			{
 				int health_code_chenged = ifelse(indiv->health_code_state == RED, FALSE, TRUE);
-				indiv->health_code_state = RED; //HealthCode
+				set_health_code_status( indiv, model->params, model->time, RED ); //HealthCode
 				if( health_code_chenged )
 					intervention_on_health_code_changed(model, indiv); //HealthCode
 			}
@@ -1510,7 +1510,7 @@ int resolve_quarantine_reasons(int *quarantine_reasons)  //TODO: check
 
 
 //HealthCode
-// TODO: 加入hotspot通行限制
+// TODO: 加入调用它的逻辑，加入hotspot通行限制
 void intervention_on_health_code_changed( model* model, individual* indiv, int transition_type ) //PROGRESS
 {
 	if( !model->params->interventions_on )

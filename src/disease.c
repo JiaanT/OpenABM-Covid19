@@ -504,6 +504,7 @@ void transition_to_recovered( model *model, individual *indiv )
 	}
 
 	transition_one_disese_event( model, indiv, RECOVERED, SUSCEPTIBLE, RECOVERED_SUSCEPTIBLE );
+	set_health_code_status( indiv, model->params, model->time, GREEN ); //HealthCode
 	set_recovered( indiv, model->params, model->time, model);
 }
 

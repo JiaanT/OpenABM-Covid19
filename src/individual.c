@@ -566,20 +566,10 @@ void set_health_code_user( individual *indiv, parameters* params, int time )
 *  Description: sets a person's health code status (green, yellow, red, orange)
 *  Returns:		void
 ******************************************************************************************/
-void set_health_code_status( individual *indiv, parameters* params, int time, int status, model *model)
+void set_health_code_status( individual *indiv, parameters* params, int time, int status )
 {
 	indiv->health_code_state = status;
 	update_random_interactions( indiv, params ); //TODO: 修改这个函数的逻辑，加入health code判断
-
-	switch( status )  //FIXME: 这个逻辑是否要放在intervention里面？
-	{
-		case GREEN:			set_quarantine_status(indiv, params, time, NOT_QUARANTINED, model) ;break;
-		case YELLOW:		set_quarantine_status(indiv, params, time, UNDER_SELF_QUARANTINE, model) ;break;
-		case ORANGE: 		set_quarantine_status(indiv, params, time, UNDER_SELF_QUARANTINE, model) ;break;
-		// TODO: Modify this logic to: the person to be quarantined after a while of health code state changed
-		case RED:			set_quarantine_status(indiv, params, time, UNDER_CENTRALIZED_QUARANTINE, model) ;break;
-		// case BLUE: 			n = params->hospitalised_daily_interactions; break; //TODO
-	}
 }
 
 
