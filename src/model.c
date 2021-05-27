@@ -1390,7 +1390,7 @@ int one_time_step( model *model )
 		   ( n_daily( model, MANUAL_CONTACT_TRACING, model->time ) > 0 )
 	)
 	{
-		transition_events( model, TEST_TAKE,              &intervention_test_take,          TRUE );  //PROGRESS
+		transition_events( model, TEST_TAKE,              &intervention_test_take,          TRUE );
 		transition_events( model, TEST_RESULT,            &intervention_test_result,        TRUE );
 		transition_events( model, MANUAL_CONTACT_TRACING, &intervention_manual_trace,       TRUE );
 	}
@@ -1401,8 +1401,8 @@ int one_time_step( model *model )
 	transition_events( model, QUARANTINE_RELEASE,     &intervention_quarantine_release, FALSE );
 	transition_events( model, TRACE_TOKEN_RELEASE,    &intervention_trace_token_release,FALSE );
 
-	if( model->params->quarantine_smart_release_day > 0 )  //TODO: check
-		intervention_smart_release( model );   //TODO: check
+	if( model->params->quarantine_smart_release_day > 0 )
+		intervention_smart_release( model ); //TODO: check if need to change health code here
 
 	model->n_self_quarantine_days += model->event_lists[SELF_QUARANTINED].n_current;
 	model->n_centralized_quarantine_days += model->event_lists[CENTRALIZED_QUARANTINED].n_current;

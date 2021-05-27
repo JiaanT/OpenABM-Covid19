@@ -42,7 +42,7 @@ struct individual{
 	event *next_disease_event;
 	infection_event *infection_events;
 
-	int quarantined; //PROGRESS: check the references
+	int quarantined; //TODO: check the references
 	event *quarantine_event;
 	event *quarantine_release_event;
 	int quarantine_test_result;

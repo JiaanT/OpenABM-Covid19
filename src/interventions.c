@@ -552,6 +552,14 @@ void intervention_quarantine_release( model *model, individual *indiv )
 		remove_event_from_event_list( model, indiv->quarantine_event );
 		set_quarantine_status( indiv, model->params, model->time, NOT_QUARANTINED, model);
 	};
+
+	if( model->params->health_code_system_on ) //HealthCode: 赋绿码
+	{
+		int health_code_chenged = ifelse(indiv->health_code_state == GREEN, FALSE, TRUE);
+		set_health_code_status( indiv, model->params, model->time, GREEN );
+		if( health_code_chenged )
+			intervention_on_health_code_changed(model, indiv);
+	}
 }
 
 /*****************************************************************************************
@@ -730,6 +738,14 @@ void intervention_vaccine_protect( model *model, individual *indiv )
 	{
 		model->n_vaccinated_fully++;
 		model->n_vaccinated_fully_by_age[ indiv->age_group ]++;
+
+		if( model->params->health_code_system_on )
+		{
+			int health_code_chenged = ifelse(indiv->health_code_state == GREEN, FALSE, TRUE);
+			set_health_code_status( indiv, model->params, model->time, GREEN ); //HealthCode
+			if( health_code_chenged )
+				intervention_on_health_code_changed(model, indiv); //HealthCode
+		}
 	}
 	if( indiv->vaccine_status == VACCINE_PROTECTED_SYMPTOMS )
 	{
@@ -793,6 +809,7 @@ void intervention_test_take( model *model, individual *indiv )
 
 
 	add_individual_to_event_list( model, TEST_RESULT, indiv, result_time );
+	
 }
 
 /*****************************************************************************************
@@ -817,6 +834,14 @@ void intervention_test_result( model *model, individual *indiv )
 			remove_traces_on_individual( model, indiv );
 			intervention_trace_token_release( model, indiv );
 		}
+		
+		if( model->params->health_code_system_on ) //TODO: 目前是测一次阴性就绿码，之后要改成测多次
+		{
+			int health_code_chenged = ifelse(indiv->health_code_state == GREEN, FALSE, TRUE);
+			set_health_code_status( indiv, model->params, model->time, GREEN ); //HealthCode
+			if( health_code_chenged )
+				intervention_on_health_code_changed(model, indiv); //HealthCode
+		}
 	}
 	else
 	{
@@ -828,6 +853,14 @@ void intervention_test_result( model *model, individual *indiv )
 
 		if( !is_in_hospital( indiv ) || !(model->params->allow_clinical_diagnosis) )
 			intervention_on_positive_result( model, indiv );
+			
+		if( model->params->health_code_system_on )
+		{
+			int health_code_chenged = ifelse(indiv->health_code_state == RED, FALSE, TRUE);
+			set_health_code_status( indiv, model->params, model->time, RED ); //HealthCode
+			if( health_code_chenged )
+				intervention_on_health_code_changed(model, indiv); //HealthCode
+		}
 	}
 	indiv->quarantine_test_result = NO_TEST;
 }
@@ -843,6 +876,14 @@ void intervention_manual_trace( model *model, individual *indiv )
 	indiv->traced_on_this_trace = TRUE;
 
 	intervention_notify_contacts( model, indiv, 1, index_token, MANUAL_TRACE );
+
+	if( model->params->health_code_system_on )
+	{
+		int health_code_chenged = ifelse(indiv->health_code_state == RED, FALSE, TRUE);
+		set_health_code_status( indiv, model->params, model->time, RED ); //HealthCode
+		if( health_code_chenged )
+			intervention_on_health_code_changed(model, indiv); //HealthCode
+	}
 
 	remove_traced_on_this_trace( model, indiv );
 }
@@ -1153,12 +1194,12 @@ void intervention_on_symptoms( model *model, individual *indiv )
 	parameters *params = model->params;
 
 
-	if( model->params->health_code_system_on )
+	if( model->params->health_code_system_on ) //HealthCode: 赋黄码
 	{
 		int health_code_chenged = ifelse(indiv->health_code_state == YELLOW, FALSE, TRUE);
-		set_health_code_status( indiv, model->params, model->time, YELLOW ); //HealthCode
+		set_health_code_status( indiv, model->params, model->time, YELLOW );
 		if( health_code_chenged )
-			intervention_on_health_code_changed(model, indiv); //HealthCode
+			intervention_on_health_code_changed(model, indiv);
 	}
 
 	quarantine = indiv->quarantined || gsl_ran_bernoulli( rng, params->self_quarantine_fraction );
@@ -1511,7 +1552,7 @@ int resolve_quarantine_reasons(int *quarantine_reasons)  //TODO: check
 
 //HealthCode
 // TODO: 加入调用它的逻辑，加入hotspot通行限制
-void intervention_on_health_code_changed( model* model, individual* indiv, int transition_type ) //PROGRESS
+void intervention_on_health_code_changed( model* model, individual* indiv, int transition_type )
 {
 	if( !model->params->interventions_on )
 		return;

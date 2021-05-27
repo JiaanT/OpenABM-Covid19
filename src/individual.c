@@ -123,7 +123,6 @@ void set_quarantine_status(
 	model *model
 )  //TODO: Quarantine time/duration
 {
-	// PROGRESS
 	switch( status )
 	{
 		case UNDER_SELF_QUARANTINE:
