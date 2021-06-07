@@ -1552,7 +1552,8 @@ int resolve_quarantine_reasons(int *quarantine_reasons)  //TODO: check
 
 //HealthCode
 // TODO: 加入调用它的逻辑，加入hotspot通行限制
-void intervention_on_health_code_changed( model* model, individual* indiv, int transition_type )
+// void intervention_on_health_code_changed( model* model, individual* indiv, int transition_type )
+void intervention_on_health_code_changed( model* model, individual* indiv )
 {
 	if( !model->params->interventions_on )
 		return;
@@ -1569,7 +1570,8 @@ void intervention_on_health_code_changed( model* model, individual* indiv, int t
 			self_quarantine = indiv->quarantined || gsl_ran_bernoulli( rng, params->self_quarantine_fraction );
 			if( self_quarantine )
 			{
-				time_event = model->time + sample_transition_time( model, transition_type );
+				// time_event = model->time + sample_transition_time( model, transition_type );
+				time_event = model->time + 7;
 				intervention_quarantine_until( model, indiv, NULL, time_event, TRUE, NULL, model->time, 1, SELF_QUARANTINED );
 			}
 			break;
@@ -1577,12 +1579,14 @@ void intervention_on_health_code_changed( model* model, individual* indiv, int t
 			self_quarantine = indiv->quarantined || gsl_ran_bernoulli( rng, params->self_quarantine_fraction );
 			if( self_quarantine )
 			{
-				time_event = model->time + sample_transition_time( model, transition_type );
+				// time_event = model->time + sample_transition_time( model, transition_type );
+				time_event = model->time + 14;
 				intervention_quarantine_until( model, indiv, NULL, time_event, TRUE, NULL, model->time, 1, SELF_QUARANTINED );
 			}
 			break;
 		case RED:
-			time_event = model->time + sample_transition_time( model, transition_type );
+			// time_event = model->time + sample_transition_time( model, transition_type );
+			time_event = model->time + 14;
 			intervention_quarantine_until( model, indiv, NULL, time_event, TRUE, NULL, model->time, 1, CENTRALIZED_QUARANTINED );
 			break;
 		case BLUE:

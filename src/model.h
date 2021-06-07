@@ -81,6 +81,7 @@ struct model{
 
 	long n_self_quarantine_days; //TODO 看一下这个变量是干什么的，判断一下是否需要区分self、centralized
 
+	// HealthCode
 	long n_self_quarantine_app_user;
 	long n_self_quarantine_infected;
 	long n_self_quarantine_recovered;
@@ -93,6 +94,7 @@ struct model{
 
 	long n_centralized_quarantine_days; //TODO 看一下这个变量是干什么的，判断一下是否需要区分self、centralized
 
+	// HealthCode
 	long n_centralized_quarantine_app_user;
 	long n_centralized_quarantine_infected;
 	long n_centralized_quarantine_recovered;
@@ -161,8 +163,8 @@ void build_daily_network( model* );
 void build_random_network( model*, network*, long, long* );
 void build_random_network_default( model* );
 void build_random_network_user( model*, network* );
-int add_user_network( model*, int, int, int, int, double, long, long*, long*, char* );
-int add_user_network_random( model*, int, int, long, long*, int*, char* );
+int add_user_network( model*, int, int, int, int, int, double, long, long*, long*, char* );
+int add_user_network_random( model*, int, int, int, long, long*, int*, char* );
 int delete_network( model*, network*n );
 network* get_network_by_id( model*, int );
 int get_network_ids( model*, int*, int );

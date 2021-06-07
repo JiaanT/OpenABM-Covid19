@@ -44,12 +44,12 @@ void write_network(char *, network *);
 
 void print_interactions_averages( model*, int );
 
-long get_n_transmissions( model* );
-void get_transmissions( model*,
-	long*, int*,  long*, int*,  int*,  int*,  int*,  int*,  int*,
-	long*,  int*, long*, int*, int*, int*,  int*, int*,  int*,
-	int*,  int*,  int*,  int*,  int*,  int*,  int*,  int*,
-	int*,  int*,  int*,  int*,  int*,  int*,  float*
-);
+// long get_n_transmissions( model* );
+// void get_transmissions( model*,
+// 	long*, int*,  long*, int*,  int*,  int*,  int*,  int*,  int*,
+// 	long*,  int*, long*, int*, int*, int*,  int*, int*,  int*,
+// 	int*,  int*,  int*,  int*,  int*,  int*,  int*,  int*,
+// 	int*,  int*,  int*,  int*,  int*,  int*,  float*
+// );
 
 #endif /* INPUT_H_ */

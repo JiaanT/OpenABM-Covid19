@@ -23,8 +23,12 @@ int network_skip_hospitalised( network *pnetwork ) {
 	return pnetwork->skip_hospitalised;
 }
 
-int network_skip_quarantined( network *pnetwork ) {
-	return pnetwork->skip_quarantined;
+int network_skip_self_quarantined( network *pnetwork ) {
+	return pnetwork->skip_self_quarantined;
+}
+
+int network_skip_centralized_quarantined( network *pnetwork ) {
+	return pnetwork->skip_centralized_quarantined;
 }
 
 int network_type( network *pnetwork ) {

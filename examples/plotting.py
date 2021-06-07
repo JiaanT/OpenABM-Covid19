@@ -32,15 +32,16 @@ EVENT_TYPE_STRING = {
     8: "Recovering in hospital",
     9: "Recovered",
     10: "Dead",
-    11: "Quarantined", 
-    12: "Quarantined release",
-    13: "Test taken", 
-    14: "Test result",
-    15: "Case", 
-    16: "Trace token release",
-    17: "Transition to hospital",
-    18: "Transition to critical",
-    19: "N event types"
+    11: "Self-quarantined", 
+    12: "Centralized-quarantined", 
+    13: "Quarantined release",
+    14: "Test taken", 
+    15: "Test result",
+    16: "Case", 
+    17: "Trace token release",
+    18: "Transition to hospital",
+    19: "Transition to critical",
+    20: "N event types"
 }
 
 key_params = [
@@ -431,7 +432,8 @@ def plot_timeseries_curves(df_timeseries, xlimits = None, lw = 3, timevar = "tim
     data = [{
             "total_infected": {"label": "Total infected", "c": "red", "linestyle": "solid"},
             "n_recovered": {"label": "Total recovered", "c": "#009E73", "linestyle": "solid"},
-            "n_quarantine": {"label": "Number in quarantine", "c":  "grey", "linestyle": "solid"}
+            "n_self_quarantine": {"label": "Number in quarantine", "c":  "grey", "linestyle": "solid"},
+            "n_centralized_quarantine": {"label": "Number in quarantine", "c":  "grey", "linestyle": "solid"}
         },
         {
             "n_asymptom":  {"label": "Asymptomatic", "c": "#E69F00", "linestyle": "solid"},

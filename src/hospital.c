@@ -94,7 +94,8 @@ void set_up_hospital_networks( model *model )
 		hospital->hospital_workplace_network = calloc( 1, sizeof( network ));
 		hospital->hospital_workplace_network = create_network( n_healthcare_workers, HOSPITAL_WORK );
 		hospital->hospital_workplace_network->skip_hospitalised = TRUE;
-		hospital->hospital_workplace_network->skip_quarantined  = TRUE;
+		hospital->hospital_workplace_network->skip_self_quarantined  = TRUE;
+		hospital->hospital_workplace_network->skip_centralized_quarantined  = TRUE;
 		hospital->hospital_workplace_network->construction      = NETWORK_CONSTRUCTION_WATTS_STROGATZ;
 		hospital->hospital_workplace_network->daily_fraction    = 1.0;
 

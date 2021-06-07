@@ -401,12 +401,21 @@ double get_param_sd_asymptomatic_to_recover(parameters *params)
 }
 
 /*****************************************************************************************
-*  Name:		get_param_quarantine_daily_interactions
+*  Name:		get_param_self_quarantined_daily_interactions
 *  Description: Gets the value of an int parameter
 ******************************************************************************************/
-int get_param_quarantine_daily_interactions(parameters *params)
+int get_param_self_quarantined_daily_interactions(parameters *params)
 {
-    return params->quarantined_daily_interactions;
+    return params->self_quarantined_daily_interactions;
+}
+
+/*****************************************************************************************
+*  Name:		get_param_centralized_quarantined_daily_interactions
+*  Description: Gets the value of an int parameter
+******************************************************************************************/
+int get_param_centralized_quarantined_daily_interactions(parameters *params)
+{
+    return params->centralized_quarantined_daily_interactions;
 }
 
 /*****************************************************************************************
@@ -446,93 +455,147 @@ int get_param_trace_on_positive(parameters *params)
 }
 
 /*****************************************************************************************
-*  Name:		get_param_quarantine_length_self
+*  Name:		get_param_self_quarantine_length
 *  Description: Gets the value of an int parameter
 ******************************************************************************************/
-int get_param_quarantine_length_self(parameters *params)
+int get_param_self_quarantine_length(parameters *params)
 {
-    return params->quarantine_length_self;
+    return params->self_quarantine_length;
 }
 
 /*****************************************************************************************
-*  Name:		get_param_quarantine_length_traced_symptoms
+*  Name:		get_param_self_quarantine_length_traced_symptoms
 *  Description: Gets the value of an int parameter
 ******************************************************************************************/
-int get_param_quarantine_length_traced_symptoms(parameters *params)
+int get_param_self_quarantine_length_traced_symptoms(parameters *params)
 {
-    return params->quarantine_length_traced_symptoms;
+    return params->self_quarantine_length_traced_symptoms;
 }
 
 /*****************************************************************************************
-*  Name:		get_param_quarantine_length_traced_positive
+*  Name:		get_param_centralized_quarantine_traced_positive
 *  Description: Gets the value of an int parameter
 ******************************************************************************************/
-int get_param_quarantine_length_traced_positive(parameters *params)
+int get_param_centralized_quarantine_traced_positive(parameters *params)
 {
-    return params->quarantine_length_traced_positive;
+    return params->centralized_quarantine_traced_positive;
 }
 
 /*****************************************************************************************
-*  Name:		get_param_quarantine_length_positive
+*  Name:		get_param_self_quarantine_length_traced_positive
 *  Description: Gets the value of an int parameter
 ******************************************************************************************/
-int get_param_quarantine_length_positive(parameters *params)
+int get_param_self_quarantine_length_traced_positive(parameters *params)
 {
-    return params->quarantine_length_positive;
+    return params->self_quarantine_length_traced_positive;
 }
 
 /*****************************************************************************************
-*  Name:		get_param_quarantine_dropout_self
+*  Name:		get_param_centralized_quarantine_length_traced_positive
 *  Description: Gets the value of an int parameter
 ******************************************************************************************/
-double get_param_quarantine_dropout_self(parameters *params)
+int get_param_centralized_quarantine_length_traced_positive(parameters *params)
 {
-    return params->quarantine_dropout_self;
+    return params->centralized_quarantine_length_traced_positive;
 }
 
 /*****************************************************************************************
-*  Name:		get_param_quarantine_dropout_traced_positive
+*  Name:		get_param_centralized_quarantine_on_positive
 *  Description: Gets the value of an int parameter
 ******************************************************************************************/
-double get_param_quarantine_dropout_traced_positive(parameters *params)
+int get_param_centralized_quarantine_on_positive(parameters *params)
 {
-    return params->quarantine_dropout_traced_positive;
+    return params->centralized_quarantine_on_positive;
 }
 
 /*****************************************************************************************
-*  Name:		get_param_quarantine_dropout_traced_symptoms
+*  Name:		get_param_self_quarantine_length_positive
 *  Description: Gets the value of an int parameter
 ******************************************************************************************/
-double get_param_quarantine_dropout_traced_symptoms(parameters *params)
+int get_param_self_quarantine_length_positive(parameters *params)
 {
-    return params->quarantine_dropout_traced_symptoms;
+    return params->self_quarantine_length_positive;
 }
 
 /*****************************************************************************************
-*  Name:		get_param_quarantine_dropout_positive
+*  Name:		get_param_centralized_quarantine_length_positive
 *  Description: Gets the value of an int parameter
 ******************************************************************************************/
-double get_param_quarantine_dropout_positive(parameters *params)
+int get_param_centralized_quarantine_length_positive(parameters *params)
 {
-    return params->quarantine_dropout_positive;
+    return params->centralized_quarantine_length_positive;
 }
 
 /*****************************************************************************************
-*  Name:		get_param_quarantine_compliance_traced_symptoms
+*  Name:		get_param_self_quarantine_dropout
 *  Description: Gets the value of an int parameter
 ******************************************************************************************/
-double get_param_quarantine_compliance_traced_symptoms(parameters *params)
+double get_param_self_quarantine_dropout(parameters *params)
 {
-    return params->quarantine_compliance_traced_symptoms;
+    return params->self_quarantine_dropout;
 }
 
 /*****************************************************************************************
-*  Name:		get_param_quarantine_compliance_traced_positive
+*  Name:		get_param_centralized_quarantine_dropout
 *  Description: Gets the value of an int parameter
 ******************************************************************************************/
-double get_param_quarantine_compliance_traced_positive(parameters *params)
+double get_param_centralized_quarantine_dropout(parameters *params)
 {
-    return params->quarantine_compliance_traced_positive;
+    return params->centralized_quarantine_dropout;
+}
+
+/*****************************************************************************************
+*  Name:		get_param_self_quarantine_dropout_traced_positive
+*  Description: Gets the value of an int parameter
+******************************************************************************************/
+double get_param_self_quarantine_dropout_traced_positive(parameters *params)
+{
+    return params->self_quarantine_dropout_traced_positive;
+}
+
+/*****************************************************************************************
+*  Name:		get_param_centralized_quarantine_dropout_traced_positive
+*  Description: Gets the value of an int parameter
+******************************************************************************************/
+double get_param_centralized_quarantine_dropout_traced_positive(parameters *params)
+{
+    return params->centralized_quarantine_dropout_traced_positive;
+}
+
+/*****************************************************************************************
+*  Name:		get_param_self_quarantine_dropout_traced_symptoms
+*  Description: Gets the value of an int parameter
+******************************************************************************************/
+double get_param_self_quarantine_dropout_traced_symptoms(parameters *params)
+{
+    return params->self_quarantine_dropout_traced_symptoms;
+}
+
+/*****************************************************************************************
+*  Name:		get_param_self_quarantine_compliance_traced_symptoms
+*  Description: Gets the value of an int parameter
+******************************************************************************************/
+double get_param_self_quarantine_compliance_traced_symptoms(parameters *params)
+{
+    return params->self_quarantine_compliance_traced_symptoms;
+}
+
+/*****************************************************************************************
+*  Name:		get_param_self_quarantine_compliance_traced_positive
+*  Description: Gets the value of an int parameter
+******************************************************************************************/
+double get_param_self_quarantine_compliance_traced_positive(parameters *params)
+{
+    return params->self_quarantine_compliance_traced_positive;
+}
+
+/*****************************************************************************************
+*  Name:		get_param_centralized_quarantine_compliance_traced_positive
+*  Description: Gets the value of an int parameter
+******************************************************************************************/
+double get_param_centralized_quarantine_compliance_traced_positive(parameters *params)
+{
+    return params->centralized_quarantine_compliance_traced_positive;
 }
 
 
@@ -573,47 +636,75 @@ int get_param_allow_clinical_diagnosis(parameters *params)
 }
 
 /*****************************************************************************************
-*  Name:		get_param_quarantine_household_on_symptoms
+*  Name:		get_param_self_quarantine_household_on_symptoms
 *  Description: Gets the value of an int parameter
 ******************************************************************************************/
-int get_param_quarantine_household_on_symptoms(parameters *params)
+int get_param_self_quarantine_household_on_symptoms(parameters *params)
 {
-    return params->quarantine_household_on_symptoms;
+    return params->self_quarantine_household_on_symptoms;
 }
 
 /*****************************************************************************************
-*  Name:		get_param_quarantine_household_on_positive
+*  Name:		get_param_self_quarantine_household_on_positive
 *  Description: Gets the value of an int parameter
 ******************************************************************************************/
-int get_param_quarantine_household_on_positive(parameters *params)
+int get_param_self_quarantine_household_on_positive(parameters *params)
 {
-    return params->quarantine_household_on_positive;
+    return params->self_quarantine_household_on_positive;
 }
 
 /*****************************************************************************************
-*  Name:		get_param_quarantine_household_on_traced_positive
+*  Name:		get_param_centralized_quarantine_household_on_positive
 *  Description: Gets the value of an int parameter
 ******************************************************************************************/
-int get_param_quarantine_household_on_traced_positive(parameters *params)
+int get_param_centralized_quarantine_household_on_positive(parameters *params)
 {
-    return params->quarantine_household_on_traced_positive;
+    return params->centralized_quarantine_household_on_positive;
 }
 
 /*****************************************************************************************
-*  Name:		get_param_quarantine_household_on_traced_symptoms
+*  Name:		get_param_self_quarantine_household_on_traced_positive
 *  Description: Gets the value of an int parameter
 ******************************************************************************************/
-int get_param_quarantine_household_on_traced_symptoms(parameters *params)
+int get_param_self_quarantine_household_on_traced_positive(parameters *params)
 {
-    return params->quarantine_household_on_traced_symptoms;
+    return params->self_quarantine_household_on_traced_positive;
 }
+
 /*****************************************************************************************
-*  Name:		get_param_quarantine_household_contacts_on_positive
+*  Name:		get_param_centralized_quarantine_household_on_traced_positive
 *  Description: Gets the value of an int parameter
 ******************************************************************************************/
-int get_param_quarantine_household_contacts_on_positive(parameters *params)
+int get_param_centralized_quarantine_household_on_traced_positive(parameters *params)
 {
-    return params->quarantine_household_contacts_on_positive;
+    return params->centralized_quarantine_household_on_traced_positive;
+}
+
+/*****************************************************************************************
+*  Name:		get_param_self_quarantine_household_on_traced_symptoms
+*  Description: Gets the value of an int parameter
+******************************************************************************************/
+int get_param_self_quarantine_household_on_traced_symptoms(parameters *params)
+{
+    return params->self_quarantine_household_on_traced_symptoms;
+}
+
+/*****************************************************************************************
+*  Name:		get_param_self_quarantine_household_contacts_on_positive
+*  Description: Gets the value of an int parameter
+******************************************************************************************/
+int get_param_self_quarantine_household_contacts_on_positive(parameters *params)
+{
+    return params->self_quarantine_household_contacts_on_positive;
+}
+
+/*****************************************************************************************
+*  Name:		get_param_centralized_quarantine_household_contacts_on_positive
+*  Description: Gets the value of an int parameter
+******************************************************************************************/
+int get_param_centralized_quarantine_household_contacts_on_positive(parameters *params)
+{
+    return params->centralized_quarantine_household_contacts_on_positive;
 }
 
 /*****************************************************************************************
@@ -1251,12 +1342,22 @@ int set_param_sd_asymptomatic_to_recovery(parameters *params, double value)
 }
 
 /*****************************************************************************************
-*  Name:        set_param_quarantined_daily_interactions
+*  Name:        set_param_self_quarantined_daily_interactions
 *  Description: Sets the value of parameter in array
 ******************************************************************************************/
-int set_param_quarantined_daily_interactions(parameters *params, int value)
+int set_param_self_quarantined_daily_interactions(parameters *params, int value)
 {
-    params->quarantined_daily_interactions = value;
+    params->self_quarantined_daily_interactions = value;
+    return TRUE;
+}
+
+/*****************************************************************************************
+*  Name:        set_param_centralized_quarantined_daily_interactions
+*  Description: Sets the value of parameter in array
+******************************************************************************************/
+int set_param_centralized_quarantined_daily_interactions(parameters *params, int value)
+{
+    params->centralized_quarantined_daily_interactions = value;
     return TRUE;
 }
 
@@ -1311,102 +1412,182 @@ int set_param_trace_on_positive(parameters *params, int value)
 }
 
 /*****************************************************************************************
-*  Name:        set_param_quarantine_length_self
+*  Name:        set_param_self_quarantine_length
 *  Description: Sets the value of parameter
 ******************************************************************************************/
-int set_param_quarantine_length_self(parameters *params, int value)
+int set_param_self_quarantine_length(parameters *params, int value)
 {
-   params->quarantine_length_self = value;
+   params->self_quarantine_length = value;
    return TRUE;
 }
 
 /*****************************************************************************************
-*  Name:        set_param_quarantine_length_traced_symptoms
+*  Name:        set_param_self_quarantine_length_traced_symptoms
 *  Description: Sets the value of parameter
 ******************************************************************************************/
-int set_param_quarantine_length_traced_symptoms(parameters *params, int value)
+int set_param_self_quarantine_length_traced_symptoms(parameters *params, int value)
 {
-   params->quarantine_length_traced_symptoms = value;
+   params->self_quarantine_length_traced_symptoms = value;
    return TRUE;
 }
 
 /*****************************************************************************************
-*  Name:        set_param_quarantine_length_traced_positive
+*  Name:        set_param_centralized_quarantine_traced_positive
 *  Description: Sets the value of parameter
 ******************************************************************************************/
-int set_param_quarantine_length_traced_positive(parameters *params, int value)
+int set_param_centralized_quarantine_traced_positive(parameters *params, int value)
 {
-   params->quarantine_length_traced_positive = value;
+   params->centralized_quarantine_traced_positive = value;
    return TRUE;
 }
 
 /*****************************************************************************************
-*  Name:        set_param_quarantine_length_positive
+*  Name:        set_param_self_quarantine_length_traced_positive
 *  Description: Sets the value of parameter
 ******************************************************************************************/
-int set_param_quarantine_length_positive(parameters *params, int value)
+int set_param_self_quarantine_length_traced_positive(parameters *params, int value)
 {
-   params->quarantine_length_positive = value;
+   params->self_quarantine_length_traced_positive = value;
    return TRUE;
 }
 
 /*****************************************************************************************
-*  Name:        set_param_quarantine_dropout_self
+*  Name:        set_param_centralized_quarantine_length_traced_positive
 *  Description: Sets the value of parameter
 ******************************************************************************************/
-int set_param_quarantine_dropout_self(parameters *params, double value)
+int set_param_centralized_quarantine_length_traced_positive(parameters *params, int value)
 {
-   params->quarantine_dropout_self = value;
+   params->centralized_quarantine_length_traced_positive = value;
    return TRUE;
 }
 
 /*****************************************************************************************
-*  Name:        set_param_quarantine_dropout_traced_positive
+*  Name:        set_param_centralized_quarantine_on_positive
 *  Description: Sets the value of parameter
 ******************************************************************************************/
-int set_param_quarantine_dropout_traced_positive(parameters *params, double value)
+int set_param_centralized_quarantine_on_positive(parameters *params, int value)
 {
-   params->quarantine_dropout_traced_positive = value;
+   params->centralized_quarantine_on_positive = value;
    return TRUE;
 }
 
 /*****************************************************************************************
-*  Name:        set_param_quarantine_dropout_traced_symptoms
+*  Name:        set_param_self_quarantine_length_positive
 *  Description: Sets the value of parameter
 ******************************************************************************************/
-int set_param_quarantine_dropout_traced_symptoms(parameters *params, double value)
+int set_param_self_quarantine_length_positive(parameters *params, int value)
 {
-   params->quarantine_dropout_traced_symptoms = value;
+   params->self_quarantine_length_positive = value;
    return TRUE;
 }
 
 /*****************************************************************************************
-*  Name:        set_param_quarantine_dropout_positive
+*  Name:        set_param_centralized_quarantine_length_positive
 *  Description: Sets the value of parameter
 ******************************************************************************************/
-int set_param_quarantine_dropout_positive(parameters *params, double value)
+int set_param_centralized_quarantine_length_positive(parameters *params, int value)
 {
-   params->quarantine_dropout_positive = value;
+   params->centralized_quarantine_length_positive = value;
    return TRUE;
 }
 
 /*****************************************************************************************
-*  Name:        set_param_quarantine_compliance_traced_symptoms
+*  Name:        set_param_self_quarantine_dropout
 *  Description: Sets the value of parameter
 ******************************************************************************************/
-int set_param_quarantine_compliance_traced_symptoms(parameters *params, double value)
+int set_param_self_quarantine_dropout(parameters *params, double value)
 {
-   params->quarantine_compliance_traced_symptoms = value;
+   params->self_quarantine_dropout = value;
    return TRUE;
 }
 
 /*****************************************************************************************
-*  Name:        set_param_quarantine_compliance_traced_positive
+*  Name:        set_param_centralized_quarantine_dropout
 *  Description: Sets the value of parameter
 ******************************************************************************************/
-int set_param_quarantine_compliance_traced_positive(parameters *params, double value)
+int set_param_centralized_quarantine_dropout(parameters *params, double value)
 {
-   params->quarantine_compliance_traced_positive = value;
+   params->centralized_quarantine_dropout = value;
+   return TRUE;
+}
+
+/*****************************************************************************************
+*  Name:        set_param_self_quarantine_dropout_traced_positive
+*  Description: Sets the value of parameter
+******************************************************************************************/
+int set_param_self_quarantine_dropout_traced_positive(parameters *params, double value)
+{
+   params->self_quarantine_dropout_traced_positive = value;
+   return TRUE;
+}
+
+/*****************************************************************************************
+*  Name:        set_param_centralized_quarantine_dropout_traced_positive
+*  Description: Sets the value of parameter
+******************************************************************************************/
+int set_param_centralized_quarantine_dropout_traced_positive(parameters *params, double value)
+{
+   params->centralized_quarantine_dropout_traced_positive = value;
+   return TRUE;
+}
+
+/*****************************************************************************************
+*  Name:        set_param_self_quarantine_dropout_traced_symptoms
+*  Description: Sets the value of parameter
+******************************************************************************************/
+int set_param_self_quarantine_dropout_traced_symptoms(parameters *params, double value)
+{
+   params->self_quarantine_dropout_traced_symptoms = value;
+   return TRUE;
+}
+
+/*****************************************************************************************
+*  Name:        set_param_self_quarantine_dropout_positive
+*  Description: Sets the value of parameter
+******************************************************************************************/
+int set_param_self_quarantine_dropout_positive(parameters *params, double value)
+{
+   params->self_quarantine_dropout_positive = value;
+   return TRUE;
+}
+
+/*****************************************************************************************
+*  Name:        set_param_centralized_quarantine_dropout_positive
+*  Description: Sets the value of parameter
+******************************************************************************************/
+int set_param_centralized_quarantine_dropout_positive(parameters *params, double value)
+{
+   params->centralized_quarantine_dropout_positive = value;
+   return TRUE;
+}
+
+/*****************************************************************************************
+*  Name:        set_param_self_quarantine_compliance_traced_symptoms
+*  Description: Sets the value of parameter
+******************************************************************************************/
+int set_param_self_quarantine_compliance_traced_symptoms(parameters *params, double value)
+{
+   params->self_quarantine_compliance_traced_symptoms = value;
+   return TRUE;
+}
+
+/*****************************************************************************************
+*  Name:        set_param_self_quarantine_compliance_traced_positive
+*  Description: Sets the value of parameter
+******************************************************************************************/
+int set_param_self_quarantine_compliance_traced_positive(parameters *params, double value)
+{
+   params->self_quarantine_compliance_traced_positive = value;
+   return TRUE;
+}
+
+/*****************************************************************************************
+*  Name:        set_param_centralized_quarantine_compliance_traced_positive
+*  Description: Sets the value of parameter
+******************************************************************************************/
+int set_param_centralized_quarantine_compliance_traced_positivee(parameters *params, double value)
+{
+   params->centralized_quarantine_compliance_traced_positive = value;
    return TRUE;
 }
 
@@ -1451,52 +1632,72 @@ int set_param_allow_clinical_diagnosis(parameters *params, int value)
 }
 
 /*****************************************************************************************
-*  Name:		set_param_quarantine_household_on_symptoms
+*  Name:		set_param_self_quarantine_household_on_symptoms
 *  Description: Sets the value of parameter
 ******************************************************************************************/
-int set_param_quarantine_household_on_symptoms(parameters *params, int value)
+int set_param_self_quarantine_household_on_symptoms(parameters *params, int value)
 {
-    params->quarantine_household_on_symptoms = value;
+    params->self_quarantine_household_on_symptoms = value;
     return TRUE;
 }
 
 /*****************************************************************************************
-*  Name:		set_param_quarantine_household_on_positive
+*  Name:		set_param_self_quarantine_household_on_positive
 *  Description: Sets the value of parameter
 ******************************************************************************************/
-int set_param_quarantine_household_on_positive(parameters *params, int value)
+int set_param_self_quarantine_household_on_positive(parameters *params, int value)
 {
-    params->quarantine_household_on_positive = value;
+    params->self_quarantine_household_on_positive = value;
     return TRUE;
 }
 
 /*****************************************************************************************
-*  Name:		set_param_quarantine_household_on_traced_positive
+*  Name:		set_param_self_quarantine_household_on_traced_positive
 *  Description: Sets the value of parameter
 ******************************************************************************************/
-int set_param_quarantine_household_on_traced_positive( parameters *params, int value )
+int set_param_self_quarantine_household_on_traced_positive( parameters *params, int value )
 {
-    params->quarantine_household_on_traced_positive = value;
+    params->self_quarantine_household_on_traced_positive = value;
     return TRUE;
 }
 
 /*****************************************************************************************
-*  Name:		set_param_quarantine_household_on_traced_symptoms
+*  Name:		set_param_centralized_quarantine_household_on_traced_positive
 *  Description: Sets the value of parameter
 ******************************************************************************************/
-int set_param_quarantine_household_on_traced_symptoms( parameters *params, int value )
+int set_param_centralized_quarantine_household_on_traced_positive( parameters *params, int value )
 {
-    params->quarantine_household_on_traced_symptoms = value;
+    params->centralized_quarantine_household_on_traced_positive = value;
     return TRUE;
 }
 
 /*****************************************************************************************
-*  Name:		set_param_quarantine_household_contacts_on_positive
+*  Name:		set_param_self_quarantine_household_on_traced_symptoms
 *  Description: Sets the value of parameter
 ******************************************************************************************/
-int set_param_quarantine_household_contacts_on_positive(parameters *params, int value)
+int set_param_self_quarantine_household_on_traced_symptoms( parameters *params, int value )
 {
-    params->quarantine_household_contacts_on_positive = value;
+    params->self_quarantine_household_on_traced_symptoms = value;
+    return TRUE;
+}
+
+/*****************************************************************************************
+*  Name:		set_param_self_quarantine_household_contacts_on_positive
+*  Description: Sets the value of parameter
+******************************************************************************************/
+int set_param_self_quarantine_household_contacts_on_positive(parameters *params, int value)
+{
+    params->self_quarantine_household_contacts_on_positive = value;
+    return TRUE;
+}
+
+/*****************************************************************************************
+*  Name:		set_param_centralized_quarantine_household_contacts_on_positive
+*  Description: Sets the value of parameter
+******************************************************************************************/
+int set_param_centralized_quarantine_household_contacts_on_positive(parameters *params, int value)
+{
+    params->centralized_quarantine_household_contacts_on_positive = value;
     return TRUE;
 }
 

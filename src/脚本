@@ -1,0 +1,1 @@
+ld -shared  covid19_wrap.o  model.o params.o constant.o input.o individual.o interventions.o utilities.o disease.o network.o

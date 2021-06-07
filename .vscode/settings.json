@@ -4,6 +4,8 @@
 		"utilities.h": "c",
 		"cmath": "cpp",
 		"limits": "cpp",
-		"typeinfo": "cpp"
+		"typeinfo": "cpp",
+		"params.h": "c",
+		"math.h": "c"
 	}
 }

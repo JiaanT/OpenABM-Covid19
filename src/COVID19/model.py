@@ -101,20 +101,21 @@ class EVENT_TYPES(enum.Enum):
     HOSPITALISED_RECOVERING = 8
     RECOVERED = 9
     DEATH = 10
-    QUARANTINED = 11
-    QUARANTINE_RELEASE = 12
-    TEST_TAKE = 13
-    TEST_RESULT = 14
-    CASE = 15
-    TRACE_TOKEN_RELEASE = 16
-    NOT_IN_HOSPITAL = 17
-    WAITING = 18
-    GENERAL = 19
-    ICU = 20
-    MORTUARY = 21
-    DISCHARGED = 22
-    MANUAL_CONTACT_TRACING = 23
-    N_EVENT_TYPES = 24
+    SELF_QUARANTINED = 11
+    CENTRALIZED_QUARANTINED = 12
+    QUARANTINE_RELEASE = 13
+    TEST_TAKE = 14
+    TEST_RESULT = 15
+    CASE = 16
+    TRACE_TOKEN_RELEASE = 17
+    NOT_IN_HOSPITAL = 18
+    WAITING = 19
+    GENERAL = 20
+    ICU = 21
+    MORTUARY = 22
+    DISCHARGED = 23
+    MANUAL_CONTACT_TRACING = 24
+    N_EVENT_TYPES = 25
 
 
 
@@ -1080,8 +1081,11 @@ class Model:
         results["n_asymptom"] = covid19.utils_n_current(
             self.c_model, covid19.ASYMPTOMATIC
         )
-        results["n_quarantine"] = covid19.utils_n_current(
-            self.c_model, covid19.QUARANTINED
+        results["n_self_quarantine"] = covid19.utils_n_current(
+            self.c_model, covid19.SELF_QUARANTINED
+        )
+        results["n_centralized_quarantine"] = covid19.utils_n_current(
+            self.c_model, covid19.CENTRALIZED_QUARANTINED
         )
         results["n_tests"] = covid19.utils_n_total_by_day(
             self.c_model, covid19.TEST_RESULT, int(self.c_model.time) 
@@ -1124,16 +1128,26 @@ class Model:
             )
 
 
-        results["n_quarantine_infected"] = self.c_model.n_quarantine_infected
-        results["n_quarantine_recovered"] = self.c_model.n_quarantine_recovered
-        results["n_quarantine_app_user"] = self.c_model.n_quarantine_app_user
-        results["n_quarantine_app_user_infected"] = self.c_model.n_quarantine_app_user_infected
-        results["n_quarantine_app_user_recovered"] = self.c_model.n_quarantine_app_user_recovered
-        results["n_quarantine_events"] = self.c_model.n_quarantine_events
-        results["n_quarantine_release_events"] = self.c_model.n_quarantine_release_events
-        results["n_quarantine_events_app_user"] = self.c_model.n_quarantine_events_app_user
-        results["n_quarantine_release_events_app_user"] = \
-            self.c_model.n_quarantine_release_events_app_user
+        results["n_quarantine_infected"] = self.c_model.n_self_quarantine_infected
+        results["n_centralized_quarantine_infected"] = self.c_model.n_centralized_quarantine_infected
+        results["n_self_quarantine_recovered"] = self.c_model.n_self_quarantine_recovered
+        results["n_centralized_quarantine_infected"] = self.c_model.n_centralized_quarantine_infected
+        results["n_self_quarantine_app_user"] = self.c_model.n_self_quarantine_app_user
+        results["n_centralized_quarantine_app_user"] = self.c_model.n_centralized_quarantine_app_user
+        results["n_self_quarantine_app_user_infected"] = self.c_model.n_self_quarantine_app_user_infected
+        results["n_centralized_quarantine_app_user_infected"] = self.c_model.n_centralized_quarantine_app_user_infected
+        results["n_self_quarantine_app_user_recovered"] = self.c_model.n_self_quarantine_app_user_recovered
+        results["n_centralized_quarantine_app_user_recovered"] = self.c_model.n_centralized_quarantine_app_user_recovered
+        results["n_self_quarantine_events"] = self.c_model.n_self_quarantine_events
+        results["n_centralized_quarantine_events"] = self.c_model.n_centralized_quarantine_events
+        results["n_self_quarantine_release_events"] = self.c_model.n_self_quarantine_release_events
+        results["n_centralized_quarantine_release_events"] = self.c_model.n_centralized_quarantine_release_events
+        results["n_self_quarantine_events_app_user"] = self.c_model.n_self_quarantine_events_app_user
+        results["n_centralized_quarantine_events_app_user"] = self.c_model.n_centralized_quarantine_events_app_user
+        results["n_self_quarantine_release_events_app_user"] = \
+            self.c_model.n_self_quarantine_release_events_app_user
+        results["n_centralized_quarantine_release_events_app_user"] = \
+            self.c_model.n_centralized_quarantine_release_events_app_user
             
         results["R_inst"] = covid19.calculate_R_instanteous( self.c_model, self.c_model.time, 0.5 )
         results["R_inst_05"] = covid19.calculate_R_instanteous( self.c_model, self.c_model.time, 0.05 )

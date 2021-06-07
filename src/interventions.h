@@ -69,6 +69,6 @@ void intervention_smart_release( model* );//PROGRESS
 int resolve_quarantine_reasons(int *);
 
 // TODO: intervention_on_health_code_changed
-void intervention_on_health_code_changed( model*, individual* ) //HealthCode
+void intervention_on_health_code_changed( model*, individual* ); //HealthCode
 
 #endif /* INTERVENTIONS_H_ */
