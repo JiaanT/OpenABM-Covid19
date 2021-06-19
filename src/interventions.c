@@ -835,13 +835,13 @@ void intervention_test_result( model *model, individual *indiv )
 			intervention_trace_token_release( model, indiv );
 		}
 		
-		if( model->params->health_code_system_on ) //TODO: 目前是测一次阴性就绿码，之后要改成测多次
-		{
-			int health_code_chenged = ifelse(indiv->health_code_state == GREEN, FALSE, TRUE);
-			set_health_code_status( indiv, model->params, model->time, GREEN ); //HealthCode
-			if( health_code_chenged )
-				intervention_on_health_code_changed(model, indiv); //HealthCode
-		}
+		// if( model->params->health_code_system_on ) //TODO: 目前是测一次阴性就绿码，之后要改成测多次
+		// {
+		// 	int health_code_chenged = ifelse(indiv->health_code_state == GREEN, FALSE, TRUE);
+		// 	set_health_code_status( indiv, model->params, model->time, GREEN ); //HealthCode
+		// 	if( health_code_chenged )
+		// 		intervention_on_health_code_changed(model, indiv); //HealthCode
+		// }
 	}
 	else
 	{
@@ -1571,12 +1571,14 @@ void intervention_on_health_code_changed( model* model, individual* indiv )
 			if( self_quarantine )
 			{
 				// time_event = model->time + sample_transition_time( model, transition_type );
-				time_event = model->time + 7;
-				intervention_quarantine_until( model, indiv, NULL, time_event, TRUE, NULL, model->time, 1, SELF_QUARANTINED );
+				time_event = model->time + 100;
+				// intervention_quarantine_until( model, indiv, NULL, time_event, TRUE, NULL, model->time, 1, SELF_QUARANTINED );
+				intervention_quarantine_until( model, indiv, NULL, time_event, TRUE, NULL, model->time, 1, CENTRALIZED_QUARANTINED );
 			}
 			break;
 		case ORANGE:
-			self_quarantine = indiv->quarantined || gsl_ran_bernoulli( rng, params->self_quarantine_fraction );
+			// self_quarantine = indiv->quarantined || gsl_ran_bernoulli( rng, params->self_quarantine_fraction );
+			self_quarantine = TRUE;
 			if( self_quarantine )
 			{
 				// time_event = model->time + sample_transition_time( model, transition_type );
@@ -1588,6 +1590,9 @@ void intervention_on_health_code_changed( model* model, individual* indiv )
 			// time_event = model->time + sample_transition_time( model, transition_type );
 			time_event = model->time + 14;
 			intervention_quarantine_until( model, indiv, NULL, time_event, TRUE, NULL, model->time, 1, CENTRALIZED_QUARANTINED );
+			intervention_test_order(model, indiv, model->time);
+			intervention_test_order(model, indiv, model->time + 14);
+			// printf("%d\n", &indiv->idx);
 			break;
 		case BLUE:
 			//TODO: 可以进入特殊场所

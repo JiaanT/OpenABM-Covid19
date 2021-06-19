@@ -84,7 +84,7 @@ void initialize_individual(
 	}
 
 	// HEALTHCODE
-	indiv->health_code_user = FALSE;
+	indiv->health_code_user = TRUE;
 	indiv->health_code_state = NULL;
 }
 

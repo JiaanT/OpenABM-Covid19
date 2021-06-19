@@ -500,6 +500,9 @@ void read_param_file( parameters *params)
 	check = fscanf(parameter_file, " %i ,", &(params->intervention_start_time));
 	if( check < 1){ print_exit("Failed to read parameter intervention_start_time)\n"); };
 
+	check = fscanf(parameter_file, " %i ,", &(params->health_code_system_on));
+	if( check < 1){ print_exit("Failed to read parameter health_code_system_on)\n"); };
+
 	check = fscanf(parameter_file, " %i ,", &(params->hospital_on));
 	if( check < 1){ print_exit("Failed to read parameter hospital_on)\n"); };
 

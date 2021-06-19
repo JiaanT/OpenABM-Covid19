@@ -64,7 +64,7 @@ void assign_household_distribution( model *model, demographic_household_table *d
 		}
 
 		housesize = 0;
-		while( demo_house->house_no[ pdx ] == hdx )
+		while( demo_house->house_no[ pdx ] == hdx ) //针对每个在同一个house里的人
 		{
 			// check the house column is correct
 			age = demo_house->age_group[ pdx ];
@@ -153,6 +153,7 @@ void set_up_allocate_default_work_places( model *model )
 {
 	int adx, ndx;
 	long pdx, n_adult;
+    // 每种occupation_network对应的人口总数
 	long pop_net_raw[N_DEFAULT_OCCUPATION_NETWORKS];
 	double other;
 	double **prob = calloc( N_AGE_GROUPS, sizeof(double*));
@@ -160,7 +161,7 @@ void set_up_allocate_default_work_places( model *model )
 		model->params->child_network_adults,
 		1.0,
 		model->params->elderly_network_adults
-	};
+	}; //每种occupation_network里面成人的比例
 
 	// get the raw population in each network
 	for( ndx = 0; ndx < N_DEFAULT_OCCUPATION_NETWORKS; ndx++ )

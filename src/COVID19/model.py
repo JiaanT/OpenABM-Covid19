@@ -86,6 +86,7 @@ PYTHON_SAFE_UPDATE_PARAMS = [
     "fatality_fraction_60_69",
     "fatality_fraction_70_79",
     "fatality_fraction_80",
+	"health_code_system_on"
 ]
 
 
@@ -576,7 +577,7 @@ class Model:
         Returns:
             [type] -- [value of param stored]
         """
-        value = None
+        value = None 
         try:
             LOGGER.info(f"Getting param {name}")
             split_param, idx = _get_base_param_from_enum(f"get_model_param_{name}")
