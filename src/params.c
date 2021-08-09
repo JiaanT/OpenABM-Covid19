@@ -10,7 +10,7 @@
 #include "utilities.h"
 #include "model.h"
 #include "disease.h"
-#include "individual.h"
+// #include "individual.h"
 #include "interventions.h"
 #include "demographics.h"
 #include <string.h>
@@ -624,6 +624,15 @@ int get_model_param_app_turned_on(model *model)
 }
 
 /*****************************************************************************************
+*  Name:		get_model_param_health_code_system_on
+*  Description: Gets the value of an int parameter
+******************************************************************************************/
+int get_model_param_health_code_system_on(model *model)
+{
+	return model->params->health_code_system_on;
+}
+
+/*****************************************************************************************
 *  Name:		get_model_param_lockdown_on
 *  Description: Gets the value of an int parameter
 ******************************************************************************************/
@@ -1199,6 +1208,18 @@ void update_household_intervention_state(model *model, int value)
 		//Set household transmission to non multiplied state
 		model->params->relative_transmission_used[HOUSEHOLD] = model->params->relative_transmission[HOUSEHOLD];
 	}
+}
+
+/*****************************************************************************************
+*  Name:		set_model_param_health_code_system_on
+*  Description: turns lockdown on and off
+******************************************************************************************/
+int set_model_param_health_code_system_on( model *model, int value )
+{
+	
+	model->params->health_code_system_on = value;
+
+	return TRUE;
 }
 
 /*****************************************************************************************

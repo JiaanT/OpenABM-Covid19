@@ -1,1 +1,11 @@
+
+cd src
+
+swig -python covid19.i
+gcc -c -I/usr/include/python3.7 -lpython3.7 covid19_wrap.c  model.c params.c constant.c input.c individual.c interventions.c utilities.c disease.c network.c -fPIC
 ld -shared  covid19_wrap.o  model.o params.o constant.o input.o individual.o interventions.o utilities.o disease.o network.o
+
+cd ..
+
+make all
+make install
